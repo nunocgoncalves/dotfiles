@@ -26,6 +26,8 @@ export LANG=en_US.UTF-8
 
 export EDITOR=/opt/homebrew/bin/nvim
 
+export OBSIDIAN_HOME=/Users/nunogoncalves/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/2nd-brain
+
 alias la=tree
 alias cat=bat
 
@@ -91,6 +93,10 @@ alias ke="kubectl exec -it"
 alias kcns='kubectl config set-context --current --namespace'
 alias podname=''
 
+# HashiCorp Vault
+export VAULT_ADDR=https://vault.prod.ams1.coreflux.cloud:8200
+export VAULT_CACERT="/Users/nunogoncalves/Developer/cf/CA/Coreflux_Root_v1/Coreflux_PKI_CA_v1/coreflux_pki_ca_v1_cert.pem"
+
 # HTTP requests with xh!
 alias http="xh"
 
@@ -142,3 +148,9 @@ f() { echo "$(find . -type f -not -path '*/.*' | fzf)" | pbcopy }
 fv() { nvim "$(find . -type f -not -path '*/.*' | fzf)" }
 
 eval "$(zoxide init zsh)"
+
+ # Nix
+ if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+    . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+ fi
+ # End Nix

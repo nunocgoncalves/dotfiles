@@ -29,6 +29,7 @@ kubebuilder
 kubectx
 kustomize
 lazygit
+libusb
 lolcat
 lua
 mitmproxy
@@ -54,6 +55,7 @@ stern
 stow
 stripe/stripe-cli/stripe
 tailwarden/komiser/komiser
+temporal
 telnet
 terraform
 tflint
@@ -63,6 +65,7 @@ tor
 torsocks
 trash
 tree
+vault
 watch
 wezterm
 wget
