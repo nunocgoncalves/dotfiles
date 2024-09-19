@@ -1,0 +1,13 @@
+[user]
+    name = N. Goncalves
+    email = nuno@nunocgoncalves.com
+    signingkey = 0EB6A08F71757F38
+
+[commit]
+    gpgsign = true
+
+[core]
+    excludesfile = ~/.gitignore_global
+
+[url "ssh://git@github.com/"]
+    insteadOf = https://github.com/

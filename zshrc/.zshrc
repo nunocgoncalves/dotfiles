@@ -18,15 +18,13 @@ export STARSHIP_CONFIG=~/.config/starship/starship.toml
 
 # SSH Agent
 eval "$(ssh-agent -s)"
-ssh-add ~/.ssh/github
-ssh-add ~/.ssh/gitlab
+ssh-add ~/.ssh/git/github
 
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8
-
 export EDITOR=/opt/homebrew/bin/nvim
-
-export OBSIDIAN_HOME=/Users/nunogoncalves/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/2nd-brain
+export OBSIDIAN_HOME=/Users/nunogoncalves/Documents/2nd-brain
+export GNUPGHOME=~/.gnupg/trezor
 
 alias la=tree
 alias cat=bat
@@ -154,3 +152,4 @@ eval "$(zoxide init zsh)"
     . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
  fi
  # End Nix
+export PATH=$PATH:/Users/nunogoncalves/.local/bin

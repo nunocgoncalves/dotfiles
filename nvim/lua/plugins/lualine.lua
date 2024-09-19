@@ -17,11 +17,6 @@ require('lualine').setup {
         color = { fg = "#ff9e64" },
       },
     },
-    lualine_a = {
-      {
-        'buffers',
-      }
-    }
   }
 }
 
