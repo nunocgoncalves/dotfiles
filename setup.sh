@@ -26,3 +26,4 @@ stow --target="$HOME/.config/tmux" tmux
 stow --target="$HOME/" wezterm
 stow --target="$HOME/" zshrc
 stow --target="$HOME/" gitconfig
+stow --target="$HOME/.ssh/" sshconfig
