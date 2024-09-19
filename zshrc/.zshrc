@@ -16,15 +16,18 @@ bindkey '^e' autosuggest-accept
 eval "$(starship init zsh)"
 export STARSHIP_CONFIG=~/.config/starship/starship.toml
 
-# SSH Agent
-eval "$(ssh-agent -s)"
-ssh-add ~/.ssh/git/github
-
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8
+
 export EDITOR=/opt/homebrew/bin/nvim
 export OBSIDIAN_HOME=/Users/nunogoncalves/Documents/2nd-brain
 export GNUPGHOME=~/.gnupg/trezor
+
+# Compiler flags for multi-target compilation compatability
+export LDFLAGS="-L/opt/homebrew/opt/pcsc-lite/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/pcsc-lite/include"
+
+# Aliases
 
 alias la=tree
 alias cat=bat
@@ -92,7 +95,7 @@ alias kcns='kubectl config set-context --current --namespace'
 alias podname=''
 
 # HashiCorp Vault
-export VAULT_ADDR=https://vault.prod.ams1.coreflux.cloud:8200
+export VAULT_ADDR=https://localhost:8200
 export VAULT_CACERT="/Users/nunogoncalves/Developer/cf/CA/Coreflux_Root_v1/Coreflux_PKI_CA_v1/coreflux_pki_ca_v1_cert.pem"
 
 # HTTP requests with xh!
