@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>com.trezor.agent</string>
+
+    <key>ProgramArguments</key>
+    <array>
+      <string>/opt/homebrew/bin/trezor-agent</string>
+      <string>--foreground</string>
+      <string>--sock-path</string>
+      <string>/Users/nunogoncalves/.trezor-agent/S.ssh</string>
+      <string>/Users/nunogoncalves/.ssh/trezor.conf</string>
+    </array>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+      <key>HOME</key>
+      <string>/Users/nunogoncalves</string>
+      <key>USER</key>
+      <string>nunogoncalves</string>
+      <key>DISPLAY</key>
+      <string>:0</string>
+      <key>PATH</key>
+      <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/trezor-agent.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/tmp/trezor-agent-error.log</string>
+  </dict>
+</plist>

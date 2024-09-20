@@ -27,3 +27,11 @@ stow --target="$HOME/" wezterm
 stow --target="$HOME/" zshrc
 stow --target="$HOME/" gitconfig
 stow --target="$HOME/.ssh/" sshconfig
+stow --target="$HOME/Library/LaunchAgents/" trezor
+
+# Setup trezor-agent socket directory
+mkdir -p ~/.trezor-agent
+chmod 700 ~/.trezor-agent
+
+# Setup launch agents
+launchctl load ~/Library/LaunchAgents/com.trezor.agent.plist
