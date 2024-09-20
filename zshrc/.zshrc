@@ -27,6 +27,9 @@ export GNUPGHOME=~/.gnupg/trezor
 export LDFLAGS="-L/opt/homebrew/opt/pcsc-lite/lib"
 export CPPFLAGS="-I/opt/homebrew/opt/pcsc-lite/include"
 
+# SSH and Trezor
+export SSH_AUTH_SOCK=${HOME}/.trezor-agent/S.ssh
+
 # Aliases
 
 alias la=tree
