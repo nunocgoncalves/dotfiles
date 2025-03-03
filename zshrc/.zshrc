@@ -16,12 +16,26 @@ bindkey '^e' autosuggest-accept
 eval "$(starship init zsh)"
 export STARSHIP_CONFIG=~/.config/starship/starship.toml
 
+# Nix
+if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+  . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+fi
+# End Nix
+
 # You may need to manually set your language environment
 export LANG=en_US.UTF-8
 
 export EDITOR=/opt/homebrew/bin/nvim
 export OBSIDIAN_HOME=/Users/nunogoncalves/Documents/2nd-brain
 export GNUPGHOME=~/.gnupg/trezor
+export ANTHROPIC_API_KEY=
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 # Compiler flags for multi-target compilation compatability
 export LDFLAGS="-L/opt/homebrew/opt/pcsc-lite/lib"
@@ -32,6 +46,8 @@ export SSH_AUTH_SOCK=${HOME}/.trezor-agent/S.ssh
 
 # Aliases
 
+alias java-11="export JAVA_HOME=`/usr/libexec/java_home -v 11`; java -version"
+alias java-21="export JAVA_HOME=`/usr/libexec/java_home -v 21`; java -version"
 alias la=tree
 alias cat=bat
 
@@ -96,10 +112,6 @@ alias kl="kubectl logs -f"
 alias ke="kubectl exec -it"
 alias kcns='kubectl config set-context --current --namespace'
 alias podname=''
-
-# HashiCorp Vault
-export VAULT_ADDR=https://localhost:8200
-export VAULT_CACERT="/Users/nunogoncalves/Developer/cf/CA/Coreflux_Root_v1/Coreflux_PKI_CA_v1/coreflux_pki_ca_v1_cert.pem"
 
 # HTTP requests with xh!
 alias http="xh"

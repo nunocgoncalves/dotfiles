@@ -1,0 +1,27 @@
+Host github.com
+  IdentitiesOnly yes
+  IdentityFile ~/.ssh/github.pub
+
+Host gitlab.com
+  IdentityFile ~/.ssh/gitlab.pub
+
+Host 4lsw2t2.city0.mercurylabs.xyz
+  IdentityFile ~/.ssh/sysadmin-4lsw2t2-city0-mercurylabs-xyz.pub
+
+Host 4lss2t2.city0.mercurylabs.xyz
+  IdentityFile ~/.ssh/sysadmin-4lss2t2-city0-mercurylabs-xyz.pub
+
+Host 4lvm2t2.city0.mercurylabs.xyz
+  IdentityFile ~/.ssh/sysadmin-4lvm2t2-city0-mercurylabs-xyz.pub
+
+Host 4ltn2t2.city0.mercurylabs.xyz
+  IdentityFile ~/.ssh/sysadmin-4ltn2t2-city0-mercurylabs-xyz.pub
+
+Host f67nsd2.city0.mercurylabs.xyz
+  IdentityFile ~/.ssh/sysadmin-f67nsd2-city0-mercurylabs-xyz.pub
+
+Host ai.do-ams3.mercurylabs.xyz
+  IdentityFile ~/.ssh/root-ai-do-ams3-mercurylabs-xyz.pub
+
+Host vpn.do-ams3.mercurylabs.xyz
+  IdentityFile ~/.ssh/root-vpn-do-ams3-mercurylabs-xyz.pub
