@@ -80,9 +80,7 @@ isl
 jpeg-turbo
 jpeg-xl
 jq
-jqp
 k9s
-komiser
 krb5
 kubebuilder
 kubectx
@@ -170,7 +168,6 @@ mpdecimal
 mpfr
 mpg123
 msgpack
-musl-cross
 ncdu
 ncurses
 neovim
@@ -231,7 +228,6 @@ s3cmd
 sd
 sdl2
 shellcheck
-skhd
 sleef
 snappy
 speex
@@ -287,7 +283,6 @@ zoxide
 zsh-autosuggestions
 zsh-syntax-highlighting
 zstd
-aerospace
 expo-orbit
 mitmproxy
 podman-desktop
