@@ -16,7 +16,6 @@ brew-cask-completion
 brew-gem
 brotli
 btop
-bun
 c-ares
 ca-certificates
 cairo
