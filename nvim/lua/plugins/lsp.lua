@@ -57,7 +57,7 @@ require('mason').setup()
 
 -- Enable the following language servers
 -- Feel free to add/remove any LSPs that you want here. They will automatically be installed
-local servers = { 'clangd', 'rust_analyzer', 'pyright', 'gopls', 'solidity_ls_nomicfoundation'}
+local servers = { 'bashls', 'clangd', 'eslint', 'gopls', 'jsonls', 'lua_ls', 'solidity_ls_nomicfoundation', 'pyright', 'rust_analyzer', 'sqlls', 'terraformls', 'ts_ls'}
 
 -- Ensure the servers above are installed
 require('mason-lspconfig').setup {
@@ -67,6 +67,8 @@ require('mason-lspconfig').setup {
 -- nvim-cmp supports additional completion capabilities
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+
+require('java').setup()
 
 for _, lsp in ipairs(servers) do
   require('lspconfig')[lsp].setup {
@@ -108,14 +110,47 @@ require('lspconfig').lua_ls.setup {
     },
   },
 }
---
+
+require('lspconfig').ts_ls.setup {
+  on_attach = on_attach,
+  capabilities = capabilities,
+  init_options = {
+    preferences = {
+      disableSuggestions = true,
+    }
+  }
+}
+
+require('lspconfig').jdtls.setup({
+  settings = {
+    java = {
+      configuration = {
+        runtimes = {
+          {
+            name = "JavaSE-21",
+            path = "/Library/Java/JavaVirtualMachines/openjdk21.jdk",
+            default = true,
+          }
+        }
+      }
+    }
+  }
+})
+
+require('lspconfig').terraformls.setup{}
+vim.api.nvim_create_autocmd({"BufWritePre"}, {
+  pattern = {"*.tf", "*.tfvars"},
+  callback = function()
+    vim.lsp.buf.format()
+  end,
+})
 -- nvim-cmp setup
 local cmp = require 'cmp'
 local luasnip = require 'luasnip'
 
 cmp.setup {
   view = {
-  	entries = "native"
+    entries = "native"
   },
   snippet = {
     expand = function(args)
