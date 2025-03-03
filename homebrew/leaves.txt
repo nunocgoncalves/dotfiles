@@ -24,7 +24,6 @@ certifi
 cffi
 cjson
 cmake
-cmatrix
 cowsay
 cryptography
 dav1d
@@ -293,5 +292,4 @@ aerospace
 expo-orbit
 mitmproxy
 podman-desktop
-red-canary-mac-monitor
 wezterm
