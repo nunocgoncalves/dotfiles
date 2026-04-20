@@ -1,0 +1,24 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "vllm": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Mercury Labs AI API",
+      "options": {
+        "apiKey": "{env:ML_API_KEY}",
+        "baseURL": "https://ai.opo1.mercurylabs.xyz/v1",
+        "headers": {
+          "Authorization": "Bearer custom-token"
+        }
+      },
+      "models": {
+        "Qwen 3.5 27B": {
+          "name": "Qwen 3.5 27B"
+        },
+        "Qwen 3.5 27B Thinking": {
+          "name": "Qwen 3.5 27B Thinking"
+        }
+      }
+    }
+  },
+}
