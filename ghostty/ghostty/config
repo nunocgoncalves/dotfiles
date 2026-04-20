@@ -1,0 +1,23 @@
+# Theme
+theme = Catppuccin Latte
+
+# Font
+font-family = JetBrains Mono
+font-size = 16
+
+# Window
+fullscreen = non-native
+macos-titlebar-style = hidden
+window-decoration = false
+background-blur-radius = 30
+background-opacity = 1.0
+
+# Disable tab bar
+gtk-tabs-location = hidden
+macos-option-as-alt = true
+
+# Mouse - ctrl+click opens links (Ghostty default behavior)
+
+# Keybindings - Alt+Arrow word navigation
+keybind = alt+left=text:\x1bb
+keybind = alt+right=text:\x1bf
