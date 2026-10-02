@@ -34,7 +34,7 @@ vim.treesitter.query.add_directive(
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
   ensure_installed = {
-    'go', 'lua', 'python', 'rust', 'typescript', 'regex',
+    'go', 'lua', 'python', 'typescript', 'regex',
     'bash', 'markdown', 'markdown_inline', 'sql', 'hcl', 'terraform',
     'html', 'css', 'javascript', 'yaml', 'json', 'toml',
   },
