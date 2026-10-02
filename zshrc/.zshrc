@@ -138,6 +138,9 @@ bindkey -M viins '^[[1;3D' backward-word   # Alt+Left
 bindkey -M viins '^[[1;3C' forward-word    # Alt+Right
 bindkey -M viins '^[[1;5D' backward-word   # Ctrl+Left
 bindkey -M viins '^[[1;5C' forward-word    # Ctrl+Right
+# ^R is bound to redisplay in viins, a no-op redraw, so Ctrl+R did nothing.
+# Give it the standard reverse history search.
+bindkey -M viins '^R' history-incremental-search-backward
 
 source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 # Two bindings here used to steal keys, removed in favour of the viins defaults:
