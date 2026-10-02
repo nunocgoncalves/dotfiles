@@ -78,9 +78,10 @@ require('lazy').setup({
     dependencies = "nvim-lua/plenary.nvim",
     config = function() require("todo-comments").setup {} end,
   },
-  { "folke/twilight.nvim", cmd = "Twilight" },
   {
     -- Markdown rendering — kept for the obsidian.nvim notes workflow.
+    -- Renders in normal/command/terminal modes (render_modes default) and
+    -- shows the raw markup in insert mode, plus anti-conceal at the cursor.
     'MeanderingProgrammer/render-markdown.nvim',
     ft = { "markdown" },
   },
@@ -194,33 +195,11 @@ require('lazy').setup({
     config = function() require('config.obsidian') end,
   },
 
-  -- ── database ───────────────────────────────────────────────────────────
-  {
-    'tpope/vim-dadbod',
-    lazy = true,
-    dependencies = {
-      'kristijanhusak/vim-dadbod-ui',
-      'kristijanhusak/vim-dadbod-completion',
-    },
-    config = function() require("config.dadbod").setup() end,
-  },
-
   -- ── misc ───────────────────────────────────────────────────────────────
-  {
-    "vinnymeller/swagger-preview.nvim",
-    cmd = "SwaggerPreview",
-    config = function() require('config.swagger-preview') end,
-  },
   {
     "mistricky/codesnap.nvim",
     cmd = "Codesnap",
     build = "make",
     config = function() require('config.codesnap') end,
-  },
-  {
-    "iamcco/markdown-preview.nvim",
-    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-    ft = { "markdown" },
-    build = function() vim.fn["mkdp#util#install"]() end,
   },
 })
