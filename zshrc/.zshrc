@@ -62,6 +62,13 @@ export PATH="/opt/homebrew/opt/libpq/bin:$PNPM_HOME:/opt/homebrew/bin:$PATH:$GOP
 # ---------------------------------------------------------------------------
 # 4. Completions
 # ---------------------------------------------------------------------------
+# Docker Desktop ships completions in ~/.docker/completions, but its installer
+# appends that dir to fpath at the *end* of .zshrc and then calls compinit a
+# second time to pick it up. Setting fpath here instead means the single compinit
+# below loads _docker on its first pass, so no redundant compinit runs. A Docker
+# Desktop upgrade may append its own block again; if so, delete it and keep this.
+fpath=("$HOME/.docker/completions" $fpath)
+
 autoload -Uz compinit
 autoload bashcompinit && bashcompinit
 
