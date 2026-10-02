@@ -4,20 +4,12 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 
--- LSP settings.
---  This function gets run when an LSP connects to a particular buffer.
+-- This runs when an LSP attaches to a buffer.
 local on_attach = function(_, bufnr)
-  -- NOTE: Remember that lua is a real programming language, and as such it is possible
-  -- to define small helper and utility functions so you don't have to repeat yourself
-  -- many times.
-  --
-  -- In this case, we create a function that lets us more easily define mappings specific
-  -- for LSP related items. It sets the mode, buffer and description for us each time.
   local nmap = function(keys, func, desc)
     if desc then
       desc = 'LSP: ' .. desc
     end
-
     vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
   end
 
@@ -29,12 +21,8 @@ local on_attach = function(_, bufnr)
   nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
   nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
-
-  -- See `:help K` for why this keymap
   nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
   nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
-
-  -- Lesser used LSP functionality
   nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
   nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
   nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
@@ -42,58 +30,42 @@ local on_attach = function(_, bufnr)
     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
   end, '[W]orkspace [L]ist Folders')
 
-  -- Create a command `:Format` local to the LSP buffer
   vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
-    if vim.lsp.buf.format then
-      vim.lsp.buf.format()
-    elseif vim.lsp.buf.formatting then
-      vim.lsp.buf.formatting()
-    end
+    vim.lsp.buf.format()
   end, { desc = 'Format current buffer with LSP' })
 end
 
--- Setup mason so it can manage external tooling
+-- Mason manages the external servers/tools
 require('mason').setup()
 
--- Enable the following language servers
--- Feel free to add/remove any LSPs that you want here. They will automatically be installed
-local servers = { 'bashls', 'eslint', 'gopls', 'jsonls', 'lua_ls', 'pyright', 'sqlls', 'terraformls', 'ts_ls'}
+-- Servers to install and enable.
+local servers = { 'bashls', 'eslint', 'gopls', 'jsonls', 'lua_ls', 'pyright', 'sqlls', 'terraformls', 'ts_ls' }
 
--- Ensure the servers above are installed
 require('mason-lspconfig').setup {
   ensure_installed = servers,
 }
 
--- nvim-cmp supports additional completion capabilities
+-- nvim-cmp contributes extra completion capabilities
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
-for _, lsp in ipairs(servers) do
-  require('lspconfig')[lsp].setup {
-    on_attach = on_attach,
-    capabilities = capabilities,
-  }
-end
+-- Base config merged into every server ('*' = all).
+-- This replaces the old `for ... require('lspconfig')[lsp].setup{}` loop.
+vim.lsp.config('*', {
+  on_attach = on_attach,
+  capabilities = capabilities,
+})
 
--- Turn on lsp status information
-require('fidget').setup()
-
--- Example custom configuration for lua
---
--- Make runtime files discoverable to the server
+-- Make runtime files discoverable to lua_ls
 local runtime_path = vim.split(package.path, ';')
 table.insert(runtime_path, 'lua/?.lua')
 table.insert(runtime_path, 'lua/?/init.lua')
 
-require('lspconfig').lua_ls.setup {
-  on_attach = on_attach,
-  capabilities = capabilities,
+vim.lsp.config('lua_ls', {
   settings = {
     Lua = {
       runtime = {
-        -- Tell the language server which version of Lua you're using (most likely LuaJIT)
         version = 'LuaJIT',
-        -- Setup your lua path
         path = runtime_path,
       },
       diagnostics = {
@@ -103,30 +75,36 @@ require('lspconfig').lua_ls.setup {
         library = vim.api.nvim_get_runtime_file('', true),
         checkThirdParty = false,
       },
-      -- Do not send telemetry data containing a randomized but unique identifier
       telemetry = { enable = false },
     },
   },
-}
+})
 
-require('lspconfig').ts_ls.setup {
-  on_attach = on_attach,
-  capabilities = capabilities,
+vim.lsp.config('ts_ls', {
   init_options = {
     preferences = {
       disableSuggestions = true,
     }
   }
-}
+})
 
-require('lspconfig').terraformls.setup{}
-vim.api.nvim_create_autocmd({"BufWritePre"}, {
-  pattern = {"*.tf", "*.tfvars"},
+-- Start the servers above. vim.lsp.enable handles filetype mapping, so the
+-- previous manual FileType autocmd for bash-language-server is gone — it
+-- would have started a second instance alongside the managed one.
+vim.lsp.enable(servers)
+
+-- LSP progress in the status area
+require('fidget').setup()
+
+-- Format Terraform on save
+vim.api.nvim_create_autocmd({ "BufWritePre" }, {
+  pattern = { "*.tf", "*.tfvars" },
   callback = function()
     vim.lsp.buf.format()
   end,
 })
--- nvim-cmp setup
+
+-- Completion
 local cmp = require 'cmp'
 local luasnip = require 'luasnip'
 
@@ -169,17 +147,7 @@ cmp.setup {
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
-    { name = "neorg" },
+    -- { name = 'neorg' } was listed here but is not a registered cmp source
+    -- (no neorg plugin is installed), which made cmp complain at startup.
   },
 }
-
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = 'sh',
-  callback = function()
-    vim.lsp.start({
-      name = 'bash-language-server',
-      cmd = { 'bash-language-server', 'start' },
-    })
-  end,
-})
-
