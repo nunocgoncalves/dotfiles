@@ -1,3 +1,23 @@
+# ---------------------------------------------------------------------------
+# LOCAL PATCH of catppuccin/k9s dist/catppuccin-latte.yaml
+#
+# The upstream Latte skin maps Catppuccin's accent colours 1:1, but most of
+# them are too pale to read on Latte's near-white background (#eff1f5). Only
+# three Latte colours clear WCAG AA (4.5:1) there: mauve #8839ef (4.79),
+# red #d20f39 (4.80) and text #4c4f69 (7.06).
+#
+# This copy therefore uses mauve/red/text for the text-bearing keys (table
+# header, frame title, info panel, help/menu keys, status labels, log
+# indicator) and gives the dialog a light background instead of mid-grey
+# #7c7f93, which could not carry readable text in any Latte colour.
+#
+# Deliberately left low-contrast (they are subtle chrome, not text): cursor
+# and border colours, table markColor, xray graphics, chart backgrounds and
+# the green add/toggle states, which have no darker Latte equivalent.
+#
+# Diff against upstream with:
+#   curl -sL https://raw.githubusercontent.com/catppuccin/k9s/main/dist/catppuccin-latte.yaml | diff - k9s/skins/catppuccin-latte.yaml
+# ---------------------------------------------------------------------------
 k9s:
   body:
     fgColor: '#4c4f69'
@@ -10,38 +30,38 @@ k9s:
   help:
     fgColor: '#4c4f69'
     bgColor: '#eff1f5'
-    sectionColor: '#40a02b'
+    sectionColor: '#8839ef'
     keyColor: '#1e66f5'
-    numKeyColor: '#e64553'
+    numKeyColor: '#d20f39'
   frame:
     title:
-      fgColor: '#179299'
+      fgColor: '#8839ef'
       bgColor: '#eff1f5'
-      highlightColor: '#ea76cb'
-      counterColor: '#df8e1d'
-      filterColor: '#40a02b'
+      highlightColor: '#8839ef'
+      counterColor: '#d20f39'
+      filterColor: '#8839ef'
     border:
       fgColor: '#8839ef'
       focusColor: '#7287fd'
     menu:
       fgColor: '#4c4f69'
       keyColor: '#1e66f5'
-      numKeyColor: '#e64553'
+      numKeyColor: '#d20f39'
     crumbs:
       fgColor: '#eff1f5'
-      bgColor: '#e64553'
-      activeColor: '#dd7878'
+      bgColor: '#d20f39'
+      activeColor: '#dce0e8'
     status:
       newColor: '#1e66f5'
-      modifyColor: '#7287fd'
+      modifyColor: '#8839ef'
       addColor: '#40a02b'
-      pendingColor: '#fe640b'
+      pendingColor: '#d20f39'
       errorColor: '#d20f39'
-      highlightColor: '#04a5e5'
+      highlightColor: '#8839ef'
       killColor: '#8839ef'
-      completedColor: '#9ca0b0'
+      completedColor: '#6c6f85'
   info:
-    fgColor: '#fe640b'
+    fgColor: '#d20f39'
     sectionColor: '#4c4f69'
   views:
     table:
@@ -51,9 +71,9 @@ k9s:
       cursorBgColor: '#bcc0cc'
       markColor: '#dc8a78'
       header:
-        fgColor: '#df8e1d'
+        fgColor: '#8839ef'
         bgColor: '#eff1f5'
-        sorterColor: '#04a5e5'
+        sorterColor: '#d20f39'
     xray:
       fgColor: '#4c4f69'
       bgColor: '#eff1f5'
@@ -85,16 +105,16 @@ k9s:
       fgColor: '#4c4f69'
       bgColor: '#eff1f5'
       indicator:
-        fgColor: '#7287fd'
+        fgColor: '#8839ef'
         bgColor: '#eff1f5'
         toggleOnColor: '#40a02b'
         toggleOffColor: '#6c6f85'
   dialog:
-    fgColor: '#df8e1d'
-    bgColor: '#7c7f93'
+    fgColor: '#4c4f69'
+    bgColor: '#e6e9ef'
     buttonFgColor: '#eff1f5'
-    buttonBgColor: '#8c8fa1'
+    buttonBgColor: '#8839ef'
     buttonFocusFgColor: '#eff1f5'
-    buttonFocusBgColor: '#ea76cb'
-    labelFgColor: '#dc8a78'
+    buttonFocusBgColor: '#d20f39'
+    labelFgColor: '#6c6f85'
     fieldFgColor: '#4c4f69'
