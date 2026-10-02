@@ -31,3 +31,8 @@ id_ed25519
 *.swp
 *~
 .idea/
+
+# tmux plugins are installed and updated by tpm (see tmux.conf), not committed
+# (they were previously tracked as gitlinks with no .gitmodules, which left
+#  a fresh clone with 11 empty directories)
+tmux/plugins/
