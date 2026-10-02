@@ -22,9 +22,8 @@ vim.o.smartcase = true
 vim.o.updatetime = 250
 vim.wo.signcolumn = 'yes'
 
--- Set colorscheme
---vim.cmd [[colorscheme onedark]]
-vim.cmd.colorscheme "catppuccin-latte"
+-- Colorscheme is set by the catppuccin plugin spec (see plugins/lazy.lua),
+-- so that this file has no dependency on any plugin being loaded.
 
 vim.opt.laststatus = 3
 
