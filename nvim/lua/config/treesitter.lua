@@ -1,3 +1,34 @@
+-- ---------------------------------------------------------------------------
+-- Workaround: Neovim 0.12 changed query directive captures from a single TSNode
+-- to a TSNode[] array, but nvim-treesitter's master branch still passes that
+-- array straight to vim.treesitter.get_node_text(), which fails with
+-- "attempt to call method 'range' (a nil value)".
+--
+-- It fires while resolving markdown fence injections, so any markdown file
+-- containing a code block spams errors on open (both from render-markdown and
+-- from the treesitter decoration provider).
+--
+-- Re-register the directive with an array-aware implementation. Remove this
+-- once nvim-treesitter ships a fix or we move to its `main` branch.
+vim.treesitter.query.add_directive(
+  'set-lang-from-info-string!',
+  function(match, _, bufnr, pred, metadata)
+    local capture = match[pred[2]]
+    if not capture then return end
+
+    -- Older Neovim gave a single node; 0.12 gives a list of nodes.
+    local node = capture
+    if type(capture.range) ~= 'function' then
+      node = capture[1]
+      if not node or type(node.range) ~= 'function' then return end
+    end
+
+    local alias = vim.treesitter.get_node_text(node, bufnr):lower()
+    metadata['injection.language'] = vim.filetype.match { filename = 'a.' .. alias } or alias
+  end,
+  { force = true }
+)
+
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
