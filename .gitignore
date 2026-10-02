@@ -1,0 +1,33 @@
+# ---------------------------------------------------------------
+# Secrets — never commit these.
+# Real API keys live in ~/.config/zsh/secrets.zsh (outside this repo).
+# ---------------------------------------------------------------
+secrets.zsh
+**/secrets.zsh
+*.secret
+credentials.json
+
+# env files
+.env
+.env.*
+!.env.example
+
+# keys / certs
+*.pem
+*.p12
+*.pfx
+*.key
+
+# tokens
+*.token
+id_rsa
+id_ed25519
+
+# macOS
+.DS_Store
+._*
+
+# editor / tooling cruft
+*.swp
+*~
+.idea/
