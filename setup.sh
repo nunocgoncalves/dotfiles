@@ -41,7 +41,6 @@ stow --target="$HOME/.config"                          starship
 stow --target="$HOME/.config"                          ghostty
 stow --target="$HOME/.config/nvim"                     nvim
 stow --target="$HOME/.config/tmux"                     tmux
-stow --target="$HOME/.config/opencode"                 opencode
 stow --target="$HOME/Library/Application Support/k9s"  k9s
 
 echo

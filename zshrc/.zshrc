@@ -57,7 +57,7 @@ fi
 # 3. PATH — most-specific first. Always prepend/append, never replace
 #    (replacing discards the base PATH set by /etc/zprofile path_helper).
 # ---------------------------------------------------------------------------
-export PATH="$HOME/.opencode/bin:/opt/homebrew/opt/libpq/bin:$PNPM_HOME:/opt/homebrew/bin:$PATH:$GOPATH/bin:$HOME/.local/bin"
+export PATH="/opt/homebrew/opt/libpq/bin:$PNPM_HOME:/opt/homebrew/bin:$PATH:$GOPATH/bin:$HOME/.local/bin"
 
 # ---------------------------------------------------------------------------
 # 4. Completions
