@@ -7,14 +7,16 @@ right_format = """$all"""
 command_timeout = 1000
 
 [directory.substitutions]
-'~/tests/starship-custom' = 'work-project'
+"~/Developer/nunocgoncalves" = "dev"
+"~/Developer/Iterabase-x-AI-Square" = "iterabase-ai"
+"~/Developer/worktrees" = "wt"
+"~/Documents/2nd-brain" = "brain"
 
 [git_branch]
 format =  '[$symbol$branch(:$remote_branch)]($style)'
 
 [aws]
 format = '[$symbol(profile: "$profile" )(\(region: $region\) )]($style)'
-disabled = false
 style = 'bold blue'
 symbol = " "
 
@@ -23,7 +25,6 @@ format = '[ ](bold cyan)'
 
 [kubernetes]
 symbol = '☸ '
-disabled = false
 detect_files = ['Dockerfile']
 format = '[$symbol$context( \($namespace\))]($style) '
 
