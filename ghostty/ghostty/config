@@ -12,8 +12,10 @@ font-family = Symbols Nerd Font Mono
 font-size = 16
 
 # Window
-background-blur-radius = 30
-background-opacity = 1.0
+# No blur or opacity here, deliberately. background-opacity 1.0 is the default,
+# so setting it changed nothing, and macOS window blur only reads through a
+# translucent surface - at full opacity it had nothing to show through.
+# macos-option-as-alt stays: alt+left/right below rely on Option sending Alt.
 macos-option-as-alt = true
 
 # Shell integration
