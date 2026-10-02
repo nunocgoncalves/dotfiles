@@ -69,6 +69,17 @@ export PATH="/opt/homebrew/opt/libpq/bin:$PNPM_HOME:/opt/homebrew/bin:$PATH:$GOP
 # Desktop upgrade may append its own block again; if so, delete it and keep this.
 fpath=("$HOME/.docker/completions" $fpath)
 
+# Completion behaviour, set before compinit so the styles are in force.
+# Without these, TAB lists candidates but there is no navigable menu: the
+# menuselect keymap maps the arrows to up/down-line-or-history (so they walk
+# through command history instead of the candidate list) and leaves ^? and ^H
+# undefined (so backspace does nothing while the menu is open).
+zmodload zsh/complist
+setopt AUTO_MENU
+zstyle ':completion:*' menu select
+bindkey -M menuselect '^?' backward-delete-char
+bindkey -M menuselect '^H' backward-delete-char
+
 autoload -Uz compinit
 autoload bashcompinit && bashcompinit
 
@@ -109,9 +120,22 @@ fi
 export STARSHIP_CONFIG="$HOME/.config/starship.toml"
 eval "$(starship init zsh)"
 
+# The viins keymap has no useful default for ^E: it self-inserts a raw ^E
+# control character into the command line. Give it the standard end-of-line
+# meaning. (^R is also inert in viins - it is bound to redisplay, a no-op
+# redraw - so history-incremental-search-backward is worth binding if wanted.)
+bindkey '^e' end-of-line
+
 source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-bindkey '^w' autosuggest-execute
-bindkey '^e' autosuggest-accept
+# Two bindings here used to steal keys, removed in favour of the viins defaults:
+#   bindkey '^w' autosuggest-execute   # ^w is vi-backward-kill-word
+#   bindkey '^e' autosuggest-accept    # ^e is self-insert in viins
+# autosuggest-execute replaces the buffer with the suggestion AND runs it, so a
+# habitual ^w to delete a word executed whatever was suggested - which is how a
+# line containing > could appear to turn into a different command with <. The
+# plugin already accepts a suggestion with the right arrow at end of line.
+# ^e is bound to end-of-line above, because leaving it to viins meant it
+# inserted a raw ^E control character into the line.
 
 # ---------------------------------------------------------------------------
 # 6. Aliases
