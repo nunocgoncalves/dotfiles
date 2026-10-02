@@ -33,7 +33,6 @@ path the consuming tool expects:
 | `ghostty/` | `~/.config/` → `~/.config/ghostty` |
 | `nvim/` | `~/.config/nvim/` |
 | `tmux/` | `~/.config/tmux/` |
-| `opencode/` | `~/.config/opencode/` |
 | `k9s/` | `~/Library/Application Support/k9s/` |
 | `homebrew/` | *(not stowed — reference only)* |
 
