@@ -49,13 +49,6 @@ require('lazy').setup({
     }
   },
   {
-    'Exafunction/codeium.vim',
-    event = 'BufEnter'
-  },
-  {
-    'nvim-java/nvim-java'
-  },
-  {
     "vinnymeller/swagger-preview.nvim",
   },
   {
@@ -126,7 +119,7 @@ require('lazy').setup({
     end
   },
   'ray-x/go.nvim',
-  { "catppuccin/nvim", as = "catppuccin-mocha" },
+  { "catppuccin/nvim", as = "catppuccin-latte" },
   {
     "windwp/nvim-autopairs",
     config = function() require("nvim-autopairs").setup {} end
