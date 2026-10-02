@@ -1,3 +1,14 @@
+# Defaults for every host.
+#
+# NOTE: UseKeychain is an Apple-only extension and is FATAL under Homebrew's
+# openssh ("Bad configuration option"). That formula is deliberately not
+# installed so /usr/bin/ssh (Apple's) is used — see homebrew/Brewfile.
+Host *
+  AddKeysToAgent yes
+  UseKeychain yes
+  ServerAliveInterval 60
+  ServerAliveCountMax 3
+
 Host github.com
   IdentitiesOnly yes
   IdentityFile ~/.ssh/id_ed25519
