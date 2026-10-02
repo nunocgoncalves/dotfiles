@@ -4,7 +4,7 @@
  * Sends a native macOS Notification Center notification when a turn finishes,
  * with enough context to tell *which* pi session it belongs to:
  *
- *   title:    pi — <repo>                        (e.g. "pi — iterabase-overlay")
+ *   title:    pi — <repo>                        (e.g. "pi — dotfiles")
  *   subtitle: <branch> · <session name|topic>    (e.g. "HOR-264-notify · review item 3")
  *   body:     snippet of the last assistant message (e.g. "review finished")
  *
