@@ -1,4 +1,4 @@
--- Install lazylazy
+-- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
@@ -6,22 +6,42 @@ if not vim.loop.fs_stat(lazypath) then
     "clone",
     "--filter=blob:none",
     "https://github.com/folke/lazy.nvim.git",
-    "--branch=stable", -- latest stable release
+    "--branch=stable",
     lazypath,
   })
 end
 vim.opt.rtp:prepend(lazypath)
 
--- Fixes Notify opacity issues
+-- Required by the notification UI
 vim.o.termguicolors = true
 
+-- ---------------------------------------------------------------------------
+-- Every plugin declares its own lazy-load trigger and config here, so the
+-- config only runs when the plugin actually loads. Larger config bodies live
+-- in lua/plugins/<name>.lua and are required from the `config` function.
+-- ---------------------------------------------------------------------------
 require('lazy').setup({
-  'ThePrimeagen/git-worktree.nvim',
+  -- ── theme ──────────────────────────────────────────────────────────────
+  {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    priority = 1000, -- load first so there is no theme flash
+    config = function()
+      vim.cmd.colorscheme("catppuccin-latte")
+    end,
+  },
+
+  -- ── UI ─────────────────────────────────────────────────────────────────
+  {
+    'nvim-lualine/lualine.nvim',
+    event = 'VeryLazy',
+    config = function() require('plugins.lualine') end,
+  },
   {
     "folke/noice.nvim",
+    event = "VeryLazy",
     config = function()
       require("noice").setup({
-        -- add any options here
         routes = {
           {
             filter = {
@@ -40,148 +60,167 @@ require('lazy').setup({
       })
     end,
     dependencies = {
-      -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
       "MunifTanjim/nui.nvim",
-      -- OPTIONAL:
-      --   `nvim-notify` is only needed, if you want to use the notification view.
-      --   If not available, we use `mini` as the fallback
       "rcarriga/nvim-notify",
     }
   },
+  { 'onsails/lspkind.nvim', lazy = true },
+  { "lukas-reineke/indent-blankline.nvim", event = { "BufReadPre", "BufNewFile" }, main = "ibl", opts = {} },
   {
-    "vinnymeller/swagger-preview.nvim",
+    "folke/trouble.nvim",
+    cmd = "Trouble",
+    dependencies = "nvim-tree/nvim-web-devicons",
+    config = function() require('plugins.trouble') end,
   },
   {
-    "mistricky/codesnap.nvim",
-    build = "make",
+    "folke/todo-comments.nvim",
+    event = { "BufReadPre", "BufNewFile" },
+    dependencies = "nvim-lua/plenary.nvim",
+    config = function() require("todo-comments").setup {} end,
+  },
+  { "folke/twilight.nvim", cmd = "Twilight" },
+  {
+    -- Markdown rendering — kept for the obsidian.nvim notes workflow.
+    'MeanderingProgrammer/render-markdown.nvim',
+    ft = { "markdown" },
+  },
+
+  -- ── editing ────────────────────────────────────────────────────────────
+  { 'tpope/vim-surround', event = 'VeryLazy' },
+  { 'tpope/vim-sleuth', event = { 'BufReadPre', 'BufNewFile' } },
+  {
+    'numToStr/Comment.nvim',
+    event = 'VeryLazy',
+    config = function() require('Comment').setup() end,
+  },
+  {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    config = function() require("nvim-autopairs").setup {} end,
+  },
+
+  -- ── git ────────────────────────────────────────────────────────────────
+  { 'tpope/vim-fugitive', cmd = { 'Git', 'G' } },
+  {
+    'lewis6991/gitsigns.nvim',
+    event = { 'BufReadPre', 'BufNewFile' },
+    config = function() require('plugins.gitsigns') end,
   },
   {
     "NeogitOrg/neogit",
+    cmd = "Neogit",
     dependencies = {
       "nvim-lua/plenary.nvim",         -- required
-      "sindrets/diffview.nvim",        -- optional - Diff integration
-      "nvim-telescope/telescope.nvim", -- optional
+      "sindrets/diffview.nvim",        -- diff integration
+      "nvim-telescope/telescope.nvim", -- optional integration
     },
-    config = true
+    config = function() require('plugins.neogit') end,
   },
-  'onsails/lspkind.nvim',
+
+  -- ── fuzzy finder ───────────────────────────────────────────────────────
+  {
+    'nvim-telescope/telescope.nvim',
+    cmd = 'Telescope',
+    branch = '0.1.x',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function() require('plugins.tele') end,
+  },
+  'nvim-telescope/telescope-symbols.nvim',
+  {
+    'nvim-telescope/telescope-fzf-native.nvim',
+    build = 'make',
+    cond = vim.fn.executable 'make' == 1,
+  },
+  'ThePrimeagen/git-worktree.nvim',
+
+  -- ── LSP / completion ───────────────────────────────────────────────────
+  {
+    'neovim/nvim-lspconfig',
+    event = { 'BufReadPre', 'BufNewFile' },
+    dependencies = {
+      'williamboman/mason.nvim',
+      'williamboman/mason-lspconfig.nvim',
+      'j-hui/fidget.nvim',
+    },
+    config = function() require('plugins.lsp') end,
+  },
+  {
+    'hrsh7th/nvim-cmp',
+    event = 'InsertEnter',
+    dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
+  },
+
+  -- ── treesitter ─────────────────────────────────────────────────────────
+  {
+    'nvim-treesitter/nvim-treesitter',
+    event = { 'BufReadPost', 'BufNewFile' },
+    build = function()
+      pcall(require('nvim-treesitter.install').update { with_sync = true })
+    end,
+    dependencies = { 'nvim-treesitter/nvim-treesitter-textobjects' },
+    config = function() require('plugins.treesitter') end,
+  },
+
+  -- ── debugging ──────────────────────────────────────────────────────────
+  {
+    "rcarriga/nvim-dap-ui",
+    cmd = "DapUiToggle",
+    dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
+    config = function() require('plugins.dap') end,
+  },
+  'theHamsta/nvim-dap-virtual-text',
+  'leoluz/nvim-dap-go',
+
+  -- ── language specific ──────────────────────────────────────────────────
+  {
+    'ray-x/go.nvim',
+    ft = 'go',
+    config = function()
+      -- goimports on save
+      local grp = vim.api.nvim_create_augroup("GoFormat", {})
+      vim.api.nvim_create_autocmd("BufWritePre", {
+        pattern = "*.go",
+        callback = function() require('go.format').goimport() end,
+        group = grp,
+      })
+      require('go').setup()
+    end,
+  },
+  {
+    "epwalsh/obsidian.nvim",
+    version = "*",
+    ft = "markdown",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function() require('plugins.obsidian') end,
+  },
+
+  -- ── database ───────────────────────────────────────────────────────────
+  {
+    'tpope/vim-dadbod',
+    lazy = true,
+    dependencies = {
+      'kristijanhusak/vim-dadbod-ui',
+      'kristijanhusak/vim-dadbod-completion',
+    },
+    config = function() require("config.dadbod").setup() end,
+  },
+
+  -- ── misc ───────────────────────────────────────────────────────────────
+  {
+    "vinnymeller/swagger-preview.nvim",
+    cmd = "SwaggerPreview",
+    config = function() require('plugins.swagger-preview') end,
+  },
+  {
+    "mistricky/codesnap.nvim",
+    cmd = "Codesnap",
+    build = "make",
+    config = function() require('plugins.codesnap') end,
+  },
   {
     "iamcco/markdown-preview.nvim",
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
     ft = { "markdown" },
     build = function() vim.fn["mkdp#util#install"]() end,
-  },
-  {
-    "epwalsh/obsidian.nvim",
-    version = "*",  -- recommended, use latest release instead of latest commit
-    lazy = true,
-    ft = "markdown",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-    },
-  },
-  -- Database
-  'kristijanhusak/vim-dadbod-ui',
-  'kristijanhusak/vim-dadbod-completion',
-  {
-    "tpope/vim-dadbod",
-    opt = true,
-    requires = {
-      "kristijanhusak/vim-dadbod-ui",
-      "kristijanhusak/vim-dadbod-completion",
-    },
-    config = function()
-      require("config.dadbod").setup()
-    end,
-  },
-  "tpope/vim-surround",
-  {
-    "folke/trouble.nvim",
-    dependencies = "nvim-tree/nvim-web-devicons",
-    config = function()
-      require("trouble").setup {
-        -- your configuration comes here
-        -- or leave it empty to use the default settings
-        -- refer to the configuration section below
-      }
-    end
-  },
-  {
-    "folke/todo-comments.nvim",
-    dependencies = "nvim-lua/plenary.nvim",
-    lazy = false,
-    config = function()
-      require("todo-comments").setup {}
-    end
-  },
-  'ray-x/go.nvim',
-  {
-    "catppuccin/nvim",
-    name = "catppuccin",
-    priority = 1000, -- load before other plugins so there is no theme flash
-    config = function()
-      vim.cmd.colorscheme("catppuccin-latte")
-    end,
-  },
-  {
-    "windwp/nvim-autopairs",
-    config = function() require("nvim-autopairs").setup {} end
-  },
-  { -- LSP Configuration & Plugins
-    'neovim/nvim-lspconfig',
-    dependencies = {
-      -- Automatically install LSPs to stdpath for neovim
-      'williamboman/mason.nvim',
-      'williamboman/mason-lspconfig.nvim',
-
-      -- Useful status updates for LSP
-      'j-hui/fidget.nvim',
-    }
-  },
-  { -- Autocompletion
-    'hrsh7th/nvim-cmp',
-    dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
-  },
-  { -- Highlight, edit, and navigate code
-    'nvim-treesitter/nvim-treesitter',
-    build = function()
-      pcall(require('nvim-treesitter.install').update { with_sync = true })
-    end,
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter-textobjects',
-    }
-  },
-  { "rcarriga/nvim-dap-ui", dependencies = {"mfussenegger/nvim-dap", "nvim-neotest/nvim-nio"} },
-  'theHamsta/nvim-dap-virtual-text',
-  'leoluz/nvim-dap-go',
-  -- Git related plugins
-  'tpope/vim-fugitive',
-  'lewis6991/gitsigns.nvim',
-  'nvim-lualine/lualine.nvim', -- Fancier statusline
-  { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {} },
-  'numToStr/Comment.nvim', -- "gc" to comment visual regions/lines 
-  'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
-  -- Fuzzy Finder (files, lsp, etc)
-  { 'nvim-telescope/telescope.nvim', branch = '0.1.x', dependencies = { 'nvim-lua/plenary.nvim' } },
-  'nvim-telescope/telescope-symbols.nvim',
-  -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
-  { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make', cond = vim.fn.executable 'make' == 1 },
-  {
-    "folke/twilight.nvim",
-    opts = {
-      -- your configuration comes here
-      -- or leave it empty to use the default settings
-      -- refer to the configuration section below
-    }
-  },
-  {
-    'wakatime/vim-wakatime',
-    lazy = false
-  },
-  {
-    -- Markdown rendering — kept for the obsidian.nvim notes workflow.
-    -- (Previously pulled in as an unused avante.nvim dependency.)
-    'MeanderingProgrammer/render-markdown.nvim',
-    ft = { "markdown" },
   },
 })
