@@ -126,6 +126,19 @@ eval "$(starship init zsh)"
 # redraw - so history-incremental-search-backward is worth binding if wanted.)
 bindkey '^e' end-of-line
 
+# Insert-mode word motion. In vi mode Alt+Left/Right arrive as ESC b / ESC f
+# (ghostty maps them that way), and neither is bound in the viins keymap, so ESC
+# alone just drops you into command mode - whatever you type next is then run as
+# vi commands, which reads as the line rewriting itself. Bind them to move
+# without leaving insert mode, and cover terminals that send the raw CSI forms.
+# In command mode b/w still work as normal vi motions.
+bindkey -M viins '^[b'     backward-word
+bindkey -M viins '^[f'     forward-word
+bindkey -M viins '^[[1;3D' backward-word   # Alt+Left
+bindkey -M viins '^[[1;3C' forward-word    # Alt+Right
+bindkey -M viins '^[[1;5D' backward-word   # Ctrl+Left
+bindkey -M viins '^[[1;5C' forward-word    # Ctrl+Right
+
 source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 # Two bindings here used to steal keys, removed in favour of the viins defaults:
 #   bindkey '^w' autosuggest-execute   # ^w is vi-backward-kill-word
