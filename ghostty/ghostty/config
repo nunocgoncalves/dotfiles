@@ -1,22 +1,25 @@
-# Theme
+# Theme — Ghostty's built-in resource theme.
+# (A hand-copied themes/catppuccin-latte.conf used to live here but was never
+# loaded: the name resolved to the built-in, which is what you actually see.)
 theme = Catppuccin Latte
 
 # Font
+# JetBrains Mono for text; Symbols Nerd Font Mono supplies the Nerd Font
+# glyphs (starship icons etc.) as a fallback for codepoints JetBrains Mono
+# lacks. Ghostty appends font-family values as fallbacks.
 font-family = JetBrains Mono
+font-family = Symbols Nerd Font Mono
 font-size = 16
 
 # Window
 fullscreen = non-native
+# Hides the titlebar and, on macOS, the tab bar. (gtk-tabs-location only
+# applies to the Linux/GTK build and is silently ignored here.)
 macos-titlebar-style = hidden
 window-decoration = false
 background-blur-radius = 30
 background-opacity = 1.0
-
-# Disable tab bar
-gtk-tabs-location = hidden
 macos-option-as-alt = true
-
-# Mouse - ctrl+click opens links (Ghostty default behavior)
 
 # Shell integration
 shell-integration-features = sudo,ssh-env,ssh-terminfo

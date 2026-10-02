@@ -95,8 +95,11 @@ brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 
 # --- casks ---
+
+# --- casks ---
 cask "codex"
 cask "expo-orbit"
+cask "font-symbols-only-nerd-font"
 cask "gcloud-cli"
 cask "ghostty"
 cask "mitmproxy"
