@@ -45,6 +45,14 @@ export CPPFLAGS="-I/opt/homebrew/opt/pcsc-lite/include"
 # API keys live in an untracked, gitignored file — never commit secrets
 [ -f "$HOME/.config/zsh/secrets.zsh" ] && source "$HOME/.config/zsh/secrets.zsh"
 
+# SSH agent — macOS exposes the socket via launchd (do NOT override SSH_AUTH_SOCK;
+# overriding it was pointing at a socket that no longer existed). The agent's
+# identity list clears on logout/reboot, so re-add our key when it's empty.
+if [ -S "${SSH_AUTH_SOCK:-}" ] && ! ssh-add -l >/dev/null 2>&1; then
+    ssh-add --apple-use-keychain "$HOME/.ssh/id_ed25519" >/dev/null 2>&1 \
+        || ssh-add "$HOME/.ssh/id_ed25519" >/dev/null 2>&1
+fi
+
 # ---------------------------------------------------------------------------
 # 3. PATH — most-specific first. Always prepend/append, never replace
 #    (replacing discards the base PATH set by /etc/zprofile path_helper).
