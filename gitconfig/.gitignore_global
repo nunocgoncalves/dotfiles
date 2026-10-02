@@ -1,4 +1,23 @@
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Editors
 *~
 .*.swp
-.DS_Store
+
+# Secrets and environment files (never commit these)
 .env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Language / build cruft
+__pycache__/
+*.py[cod]
+.venv/
+node_modules/
+*.log
