@@ -5,7 +5,7 @@ description: Create and govern designer briefs for exploratory visualization, ap
 
 # Product Design Brief
 
-Follow [[Product Management Operating System]] and `pi/product/WORKFLOW_STANDARD.md`.
+Follow [[Product Management Operating System]] and `~/.pi/agent/WORKFLOW_STANDARD.md`.
 
 ## Objective
 

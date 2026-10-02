@@ -4,7 +4,7 @@ Coordinator for the product-management operating system documented in Obsidian a
 
 ## Responsibilities
 
-- Discovers the product-management skills from `pi/product/skills/`.
+- Discovers the product-management skills from `~/.pi/agent/skills/`.
 - Provides `/product` as an interactive workflow chooser.
 - Provides direct commands for each workflow.
 - Keeps judgment in skills and deterministic routing in the extension.
@@ -28,13 +28,13 @@ Arguments after a direct command are passed to the corresponding skill.
 
 ## Local setup
 
+Directory stow installs the extension and its sibling product skills together:
+
 ```sh
-OVERLAY=~/Developer/nunocgoncalves/iterabase-overlay
-ln -s "$OVERLAY/pi/product/extensions/product-workflow" \
-  ~/.pi/agent/extensions/product-workflow
+cd ~/dotfiles && stow --target="$HOME/.pi" pi
 ```
 
-The extension discovers the sibling product skills, so separate local skill symlinks are not required for this suite. Run `/reload` in pi after installation.
+The extension discovers the sibling product skills, so separate skill symlinks are not required for this suite. Run `/reload` in pi after installation.
 
 ## Design
 

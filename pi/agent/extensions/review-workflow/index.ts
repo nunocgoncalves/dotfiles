@@ -19,8 +19,8 @@
  * The judgement (smells, agree/disagree, fixes) stays in the SKILLs; this
  * extension owns the protocol + state.
  *
- * Product tool — lives in the overlay repo at pi/product/extensions/review-workflow/.
- * For localhost, symlink it into ~/.pi/agent/extensions/ (see the overlay README).
+ * Lives in ~/dotfiles/pi/agent/extensions/review-workflow/, stowed to
+ * ~/.pi/agent/extensions/review-workflow.
  */
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";

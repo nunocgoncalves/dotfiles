@@ -5,9 +5,12 @@ the only sanctioned tools for posting review artifacts to a GitHub PR, and
 enforces the markers + invariants that the prompt-based skills cannot reliably
 enforce alone.
 
-This is a **product** tool — it lives in the overlay repo at
-`pi/product/extensions/review-workflow/` and ships to every AgentSandbox. For
-localhost, symlink it into `~/.pi/agent/extensions/` (see the overlay README).
+Part of the `pi` package in `~/dotfiles`, stowed to
+`~/.pi/agent/extensions/review-workflow`:
+
+```sh
+cd ~/dotfiles && stow --target="$HOME/.pi" pi
+```
 
 ## Why it exists
 

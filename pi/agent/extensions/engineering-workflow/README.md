@@ -38,10 +38,10 @@ Coordinator for the engineering ticket lifecycle defined by the Obsidian `[[Prod
 
 ## Local setup
 
+Directory stow installs it — no manual symlinks:
+
 ```sh
-OVERLAY=~/Developer/nunocgoncalves/iterabase-overlay
-ln -s "$OVERLAY/pi/product/extensions/engineering-workflow" \
-  ~/.pi/agent/extensions/engineering-workflow
+cd ~/dotfiles && stow --target="$HOME/.pi" pi
 ```
 
 Run `/reload` in pi after installation.
