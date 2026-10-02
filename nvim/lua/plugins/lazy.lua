@@ -35,7 +35,7 @@ require('lazy').setup({
   {
     'nvim-lualine/lualine.nvim',
     event = 'VeryLazy',
-    config = function() require('plugins.lualine') end,
+    config = function() require('config.lualine') end,
   },
   {
     "folke/noice.nvim",
@@ -70,7 +70,7 @@ require('lazy').setup({
     "folke/trouble.nvim",
     cmd = "Trouble",
     dependencies = "nvim-tree/nvim-web-devicons",
-    config = function() require('plugins.trouble') end,
+    config = function() require('config.trouble') end,
   },
   {
     "folke/todo-comments.nvim",
@@ -104,7 +104,7 @@ require('lazy').setup({
   {
     'lewis6991/gitsigns.nvim',
     event = { 'BufReadPre', 'BufNewFile' },
-    config = function() require('plugins.gitsigns') end,
+    config = function() require('config.gitsigns') end,
   },
   {
     "NeogitOrg/neogit",
@@ -114,7 +114,7 @@ require('lazy').setup({
       "sindrets/diffview.nvim",        -- diff integration
       "nvim-telescope/telescope.nvim", -- optional integration
     },
-    config = function() require('plugins.neogit') end,
+    config = function() require('config.neogit') end,
   },
 
   -- ── fuzzy finder ───────────────────────────────────────────────────────
@@ -123,7 +123,7 @@ require('lazy').setup({
     cmd = 'Telescope',
     branch = '0.1.x',
     dependencies = { 'nvim-lua/plenary.nvim' },
-    config = function() require('plugins.tele') end,
+    config = function() require('config.tele') end,
   },
   'nvim-telescope/telescope-symbols.nvim',
   {
@@ -142,7 +142,7 @@ require('lazy').setup({
       'williamboman/mason-lspconfig.nvim',
       'j-hui/fidget.nvim',
     },
-    config = function() require('plugins.lsp') end,
+    config = function() require('config.lsp') end,
   },
   {
     'hrsh7th/nvim-cmp',
@@ -158,7 +158,7 @@ require('lazy').setup({
       pcall(require('nvim-treesitter.install').update { with_sync = true })
     end,
     dependencies = { 'nvim-treesitter/nvim-treesitter-textobjects' },
-    config = function() require('plugins.treesitter') end,
+    config = function() require('config.treesitter') end,
   },
 
   -- ── debugging ──────────────────────────────────────────────────────────
@@ -166,7 +166,7 @@ require('lazy').setup({
     "rcarriga/nvim-dap-ui",
     cmd = "DapUiToggle",
     dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
-    config = function() require('plugins.dap') end,
+    config = function() require('config.dap') end,
   },
   'theHamsta/nvim-dap-virtual-text',
   'leoluz/nvim-dap-go',
@@ -191,7 +191,7 @@ require('lazy').setup({
     version = "*",
     ft = "markdown",
     dependencies = { "nvim-lua/plenary.nvim" },
-    config = function() require('plugins.obsidian') end,
+    config = function() require('config.obsidian') end,
   },
 
   -- ── database ───────────────────────────────────────────────────────────
@@ -209,13 +209,13 @@ require('lazy').setup({
   {
     "vinnymeller/swagger-preview.nvim",
     cmd = "SwaggerPreview",
-    config = function() require('plugins.swagger-preview') end,
+    config = function() require('config.swagger-preview') end,
   },
   {
     "mistricky/codesnap.nvim",
     cmd = "Codesnap",
     build = "make",
-    config = function() require('plugins.codesnap') end,
+    config = function() require('config.codesnap') end,
   },
   {
     "iamcco/markdown-preview.nvim",
