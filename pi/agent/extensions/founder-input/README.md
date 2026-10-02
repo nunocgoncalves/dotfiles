@@ -1,13 +1,29 @@
-# founder-input extension for Pi
+# founder-input extension for pi
 
-Provides the `request_founder_input` tool used by headless workflows. The tool
-emits one structured question, recommendation, and reason for the outer Codex
-orchestrator, then blocks dependent tool calls for the remainder of that run.
+Provides the `request_founder_input` tool: the escalation channel for a decision
+that genuinely needs the founder and cannot be discovered from canonical sources.
 
-The dispatcher returns `status: needs_input` and the Pi session ID. After the
-founder answers, it invokes `resume` with the same workflow, target, repository,
-and session. No Pi process remains running while input is pending.
+The tool takes one question, a recommended answer, why the decision is required
+now, and optional short mutually exclusive options. It is called as the only tool
+in its turn, and it stops the run — the hook blocks every dependent tool call, so
+nothing proceeds on a guess. The decision is answered in the next turn of the same
+session, and the workflow continues from canonical state rather than from guesswork.
+
+The structured request is also a stable event for any external orchestrator that
+drives headless runs, so the same tool serves an interactive session and a
+dispatched one. No Pi process needs to stay alive while the decision is pending.
 
 This extension is transport only. Product and engineering decisions must still
 be recorded in their canonical Linear or Obsidian location when the governing
 workflow requires durable approval evidence.
+
+## Local setup
+
+Part of the `pi` package in `~/dotfiles`, stowed to
+`~/.pi/agent/extensions/founder-input`:
+
+```sh
+cd ~/dotfiles && stow --target="$HOME/.pi" pi
+```
+
+Run `/reload` in pi after installation.

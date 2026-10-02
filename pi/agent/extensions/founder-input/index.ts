@@ -1,10 +1,11 @@
 /**
- * Structured founder-input pause for headless Pi workflows.
+ * Structured founder-input pause.
  *
- * The tool gives an outer Codex orchestrator a stable JSON event to relay,
- * while the hook prevents the agent from continuing with dependent tool calls
- * in the same run. A later dispatcher resume supplies the answer to the same
- * Pi session; no process needs to remain alive while the founder decides.
+ * The tool gives the agent one escalation channel for a decision it cannot
+ * discover, and the hook prevents it from continuing on a guess: after the tool
+ * returns, every dependent tool call in that run is blocked. The decision is
+ * answered in the next turn of the same session, so canonical systems — not
+ * conversation memory — carry the workflow forward.
  */
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
@@ -22,14 +23,14 @@ export default function (pi: ExtensionAPI) {
     name: "request_founder_input",
     label: "Request founder input",
     description:
-      "Pause a headless workflow for one decision that cannot be resolved from canonical sources. " +
+      "Pause for one decision that cannot be resolved from canonical sources. " +
       "Provide one question, your recommended answer, and why the decision is required.",
     promptSnippet: "Pause and request one founder decision",
     promptGuidelines: [
       "Use only when a founder/product/architecture/exception decision is genuinely required and cannot be discovered.",
       "Call this as the only tool in the assistant message, before any action that depends on the answer.",
       "Ask exactly one question and include a concrete recommendation.",
-      "After this tool returns, stop the run. The outer orchestrator will resume this same session with the answer.",
+      "After this tool returns, stop the run. The decision arrives in the next turn of this session.",
     ],
     parameters: Type.Object({
       question: Type.String({ description: "The single decision question to relay to the founder." }),
@@ -54,8 +55,8 @@ export default function (pi: ExtensionAPI) {
           {
             type: "text",
             text:
-              "Founder input requested. End this run now without making dependent changes. " +
-              "The outer Codex orchestrator will relay the decision and resume this same Pi session.",
+              "Founder input requested. Stop here without making dependent changes; " +
+              "the decision arrives in the next turn of this session.",
           },
         ],
         details,
@@ -73,7 +74,7 @@ export default function (pi: ExtensionAPI) {
     return {
       block: true,
       terminate: true,
-      reason: "Founder input is pending. Stop this run; the dispatcher will resume the same session with the answer.",
+      reason: "Founder input is pending. Stop this run; the decision arrives in the next turn of this session.",
     };
   });
 }

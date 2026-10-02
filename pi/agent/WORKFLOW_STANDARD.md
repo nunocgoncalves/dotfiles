@@ -116,7 +116,7 @@ The implementation and every `address-review` round share one **author** Pi sess
 
 Role continuity is working memory, not authority. Every continued round re-reads GitHub markers, the current PR head, CI, Linear, Obsidian, and repository state. If the original author session is unavailable for a legacy PR, one fresh recovery author session may be created and then reused for later remediation rounds.
 
-One ChatGPT/Codex conversation may orchestrate the complete loop because GitHub review markers, CI, Linear, Obsidian, and repository state are the handoff—not Pi conversation memory:
+One orchestrating conversation — a chat session, a dispatched Codex task, or a Pi session — may drive the complete loop because GitHub review markers, CI, Linear, Obsidian, and repository state are the handoff—not Pi conversation memory:
 
 ```text
 accept-ticket preflight
@@ -137,7 +137,7 @@ Skip `address-review` in a round with no developer-owned findings. The terminal 
 - Workflow state must be reconstructable from canonical systems.
 - Session state may improve UX but must not become a hidden source of truth.
 - `address-review` continues the implementation author session; all `code-review` rounds for one PR continue a separate reviewer session; acceptance is always fresh.
-- A workflow that needs a founder decision calls `request_founder_input` as its only tool in that turn. The outer orchestrator relays the structured request and resumes the same session after the answer; it never keeps Pi running while waiting.
+- A workflow that needs a founder decision calls `request_founder_input` as its only tool in that turn. The run stops there rather than proceeding on a guess: no dependent tool call follows, and the decision is answered in the next turn of the same session. The structured request is also a stable event for an external orchestrator, so the same mechanism serves an interactive session and a dispatched one, and no Pi process stays alive while the decision is pending.
 - Every created or updated PR head must reach a successful terminal CI state before the owning workflow completes. A missing, failed, cancelled, timed-out, or superseded check run is not success.
 - Workspace invariants are tool-enforced refusals, not prose reminders: primary-checkout detection, the worktree path convention, cleanliness, and exact-head matching live in the tools.
 - Developer/address-review sessions may reply to findings but may not resolve GitHub threads or emit the terminal marker. The reviewer verifies each response, explicitly resolves accepted threads, and alone decides whether the review is final.
