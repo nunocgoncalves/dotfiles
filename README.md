@@ -34,6 +34,7 @@ path the consuming tool expects:
 | `nvim/` | `~/.config/nvim/` |
 | `tmux/` | `~/.config/tmux/` |
 | `k9s/` | `~/Library/Application Support/k9s/` |
+| `pi/` | `~/.pi/` — `settings.json`, `keybindings.json`, `extensions/macos-notify.ts` |
 | `homebrew/` | *(not stowed — reference only)* |
 
 ## Adding a new config
