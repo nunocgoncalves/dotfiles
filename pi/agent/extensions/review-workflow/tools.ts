@@ -794,7 +794,7 @@ export function registerReviewTools(pi: ExtensionAPI): void {
       "Reviewer-only transition after a finding reaches the two-counter stalemate limit and the founder durably requires correction. Posts a distinct marker that makes the existing finding developer-actionable without incrementing the dispute count or creating a duplicate finding.",
     promptSnippet: "Route a founder-required correction back to the developer",
     promptGuidelines: [
-      "Use only after request_founder_input returns require-correction and the decision is recorded durably in Linear or Obsidian.",
+      "Use only after the founder durably requires correction and the decision is recorded in Linear or Obsidian.",
       "Do not use for an ordinary reviewer counter or before the two-counter stalemate limit.",
     ],
     parameters: Type.Object({

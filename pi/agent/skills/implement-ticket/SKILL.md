@@ -35,7 +35,7 @@ A lower layer cannot silently redefine a higher layer. If sources conflict, stop
 - Read linked PRDs and relevant `Areas/ho` notes through the Obsidian CLI.
 - Read repository `AGENTS.md` and other applicable standards completely.
 - Inspect the codebase before asking questions. Answer discoverable engineering questions yourself.
-- Ask unresolved founder/product/architecture questions one at a time with `request_founder_input`, providing your recommended answer and why the decision blocks the next action. Stop the run after calling it; the orchestrator resumes this same author session with the answer.
+- Ask unresolved founder/product/architecture questions one at a time directly in the session, providing your recommended answer and why the decision blocks the next action. Stop after asking; continue only once the answer arrives.
 - Obtain explicit user approval before architectural changes as required by repository standards. Immediately record each approved decision under a stable `DES-<TICKET>-NN` identifier in Linear or an Obsidian decision note, including the exact decision, approver, date, scope, consequences, and evidence link. Do not treat conversation memory as approval evidence.
 - Never implement directly on `master` or `main`.
 - Perform all ticket work in the dedicated ticket worktree (`worktree_ensure`), never in the primary checkout. Use the worktree's absolute path for every read, edit, command, commit, and push; `open_pr` refuses any other path.

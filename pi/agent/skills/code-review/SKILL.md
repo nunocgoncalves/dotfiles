@@ -18,7 +18,7 @@ The entry point is always a **GitHub PR** (number or URL). Issue references are 
 
 After CI passes for the current PR head, produce one protocol-complete reviewer round that independently evaluates repository Standards and the approved Spec, leaves every actionable finding inline, explicitly accepts or counters prior developer responses, and emits a non-terminal summary or an explicitly chosen reviewer-owned terminal signal.
 
-When a stalemate or missing product/architecture decision requires the founder, call `request_founder_input` with one question and a recommendation as the only tool in that turn, then stop. The orchestrator resumes this same reviewer session with the answer; record any approval durably before relying on it.
+When a stalemate or missing product/architecture decision requires the founder, ask one question with a recommendation directly in the session, then stop. Wait for the answer before continuing; record any approval durably before relying on it.
 
 ## Preconditions
 
@@ -63,7 +63,7 @@ Record: the PR title/body, head/base branches, the full diff, the commit message
 
 - `fixed` / `partial` / `answered` → independently verify the changed code or answer. If accepted, call `review_resolve_thread`. If inadequate, call `review_post_counter`. Never infer acceptance merely from the developer marker.
 - `disagreed` → re-evaluate. If the cited authority genuinely refutes the finding, explicitly call `review_resolve_thread`; otherwise call `review_post_counter`. For Spec findings, a disagreement requires a governing spec line or a durable `DES-*`/approved-rescope record.
-- If a finding's `reopenCount >= 2` (already disputed twice) → **do not counter again**. Call `request_founder_input` with both positions and a recommendation as the only tool in that turn. After the orchestrator resumes this same reviewer session, re-read the durable decision record. If the founder accepts the current evidence, call `review_resolve_thread`. If the founder requires correction, call `review_require_correction` for each affected finding with the stable Linear/Obsidian decision reference and the exact required change. Merely narrating the decision in a summary is insufficient because it leaves the finding `addressed` and invisible to `address-review`.
+- If a finding's `reopenCount >= 2` (already disputed twice) → **do not counter again**. Ask the founder directly in the session with both positions and a recommendation, then stop and wait for the answer. Once it arrives, re-read the durable decision record. If the founder accepts the current evidence, call `review_resolve_thread`. If the founder requires correction, call `review_require_correction` for each affected finding with the stable Linear/Obsidian decision reference and the exact required change. Merely narrating the decision in a summary is insufficient because it leaves the finding `addressed` and invisible to `address-review`.
 
 Thread resolution is deliberately manual and reviewer-owned. Call `review_resolve_thread` once for each response you accept. Use `review_reconcile_threads` read-only to confirm nothing awaits either side; automatic repair is disabled.
 

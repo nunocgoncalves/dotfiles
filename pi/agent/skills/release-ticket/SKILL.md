@@ -41,7 +41,7 @@ A path selector or agent recommendation may inform release intent but cannot cho
 - Dispatch workflows from the protected default branch. Never run release logic from a feature-branch workflow revision.
 - Infer versions only from repository authority. Callers approve targets, not independent version strings.
 - Require a non-empty, known, unique target set. Do not silently add or remove targets.
-- Ask one unresolved founder decision at a time with `request_founder_input` and include the recommended answer. Stop afterward; the orchestrator resumes this same release session. Explicit `--targets` supplied by the user counts as release intent only when the request clearly authorizes those exact targets.
+- Ask one unresolved founder decision at a time directly in the session and include the recommended answer. Stop afterward and wait for the answer. Explicit `--targets` supplied by the user counts as release intent only when the request clearly authorizes those exact targets.
 - Never self-approve the protected GitHub environment. After promotion reaches its approval gate, report the run URL and wait for founder approval.
 - Never rebuild between candidate and promotion. Never overwrite or delete immutable production artifacts to resolve a conflict.
 - Do not deploy or edit overlay repositories. Publication and deployment remain separate decisions.

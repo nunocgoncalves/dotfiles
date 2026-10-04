@@ -34,7 +34,7 @@ For a product outcome, the Obsidian PRD and product decisions define behavior an
 - A Linear project represents the outcome/release; component names belong in labels and technical scope.
 - Do not create a project for a standalone defect, risk, or operational obligation unless it is genuinely part of a broader approved outcome or release.
 - Show the complete proposed project and issue mutation plan before creating or updating Linear objects.
-- If that exact mutation plan is not already explicitly approved in the current founder request, call `request_founder_input` as the only tool in that turn and stop. Resume the same product-shaping session after approval, then re-read canonical evidence and Linear before mutating.
+- If that exact mutation plan is not already explicitly approved in the current founder request, ask the founder in that turn and stop. Resume only after approval, then re-read canonical evidence and Linear before mutating.
 - Immediately before creating an issue, search for an equivalent active issue. Reuse or update an exact match rather than duplicating it, including after a resumed or recovered run.
 - Call `linear_list_teams` before create/update operations requiring IDs.
 

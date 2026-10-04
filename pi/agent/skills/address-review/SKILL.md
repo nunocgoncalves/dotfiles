@@ -12,7 +12,7 @@ Given a PR number, it runs end-to-end unless a genuine founder/product/architect
 3. Fix what it agrees with (edit → commit → push); rebut what it disagrees with; answer `❓` questions.
 4. **Reply phase** — post one `review_post_reply` per finding, then let `review_post_response_summary` wait for CI and emit the developer completion signal. Do not resolve threads or mark the review final.
 
-Ordinary finding investigation is autonomous. If an explicit rescope, architecture decision, or review stalemate requires the founder, call `request_founder_input` with one question and a recommendation as the only tool in that turn, then stop. The orchestrator resumes this same author session with the answer; record any approval durably before relying on it.
+Ordinary finding investigation is autonomous. If an explicit rescope, architecture decision, or review stalemate requires the founder, ask one question with a recommendation directly in the session, then stop. Wait for the answer before continuing; record any approval durably before relying on it.
 
 ## Objective
 
@@ -90,7 +90,7 @@ Rubric:
 
 - Default to **agreeing** with the review unless you have a concrete, citable reason not to. "I prefer it my way" is not a reason.
 - A documented repo standard, governing PRD/product decision, or consistent Linear delivery criterion beats the reviewer's judgement; cite the correct authority layer when rebutting.
-- **Never bail from spec scope via `disagreed`.** If a Spec finding is backed by the Linear issue / PRD, either fix it or call `request_founder_input` for an approved rescope (AGENTS.md) — do not unilaterally mark it `disagreed` as "out of scope".
+- **Never bail from spec scope via `disagreed`.** If a Spec finding is backed by the Linear issue / PRD, either fix it or ask the founder for an approved rescope (AGENTS.md) — do not unilaterally mark it `disagreed` as "out of scope".
 - For genuine ambiguity, state your interpretation and the assumption you're proceeding under rather than leaving the thread hanging.
 - Keep every reply under ~120 words and focused on the one finding.
 

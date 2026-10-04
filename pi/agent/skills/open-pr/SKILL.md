@@ -54,7 +54,7 @@ Determine the Linear identifier:
 
 - If the user gave one (e.g. `HOR-123`), use it.
 - Otherwise parse it from the current branch name: `git branch --show-current` should match `HOR-NNN-…`. Extract `HOR-NNN`.
-- If neither yields an identifier, call `request_founder_input` for the ticket as the only tool in that turn and stop. The orchestrator resumes this same author session with the answer.
+- If neither yields an identifier, ask the founder for the ticket in that turn and stop. Continue only once the answer arrives.
 
 Resolve the dedicated ticket worktree with `worktree_ensure ticketId=<TICKET>` (add `branch=<TICKET>-<desc>` when no matching branch exists yet). It reuses existing work and refuses — with the exact move-off command — while the ticket branch is still checked out in the primary checkout. If the branch name does not match `<TICKET>-<desc>`, rename it inside the worktree: `git -C <worktree> branch -m <TICKET>-<desc>`.
 

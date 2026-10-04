@@ -21,7 +21,7 @@ The PRD defines the intended outcome and release criteria. Linear and GitHub pro
 - Use the Obsidian CLI for product artifacts.
 - Distinguish engineering validation, release readiness, customer validation, and outcome measurement.
 - Do not mark product work successful because tickets are closed or artifacts were merely merged.
-- Ask one unresolved decision question at a time with `request_founder_input` and a recommendation, then stop so the orchestrator can resume this same session with the answer.
+- Ask one unresolved decision question at a time directly in the session with a recommendation, then stop and wait for the answer.
 - Do not move projects/issues to completed unless the relevant acceptance contract is satisfied or the user explicitly accepts a documented exception.
 - When the release decision requires semantic artifact publication that was deferred from ticket acceptance, record the approved source and exact affected-target intent, then route publication through `release-ticket`; never publish with raw tags or ad hoc package commands.
 

@@ -27,7 +27,7 @@ If they conflict, do not mark Done. Require an explicit rescope or remediation d
 - Verify evidence; do not infer acceptance from a merged state alone.
 - Do not merge PRs. Only the user controls merge.
 - Do not mark a product project Completed; `product-release-review` owns product/release acceptance.
-- Ask one unresolved acceptance decision at a time with `request_founder_input`, including a recommended answer and the affected acceptance gate. Stop afterward; the orchestrator resumes only this still-paused acceptance invocation.
+- Ask one unresolved acceptance decision at a time directly in the session, including a recommended answer and the affected acceptance gate. Stop afterward and wait for the answer before continuing.
 - Preserve accepted exceptions in Linear and the release evidence.
 - Classify semantic publication as **required for ticket acceptance**, **deferred to product release review**, or **none** before deciding. Ambiguity blocks Done.
 - Do not publish artifacts inside this workflow. When required publication evidence is missing, stop and route to `release-ticket`.

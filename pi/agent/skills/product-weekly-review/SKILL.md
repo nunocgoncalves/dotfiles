@@ -21,7 +21,7 @@ Obsidian holds product direction and review decisions. Linear provides delivery 
 - Query current Linear projects, Todo/In Progress/In Review issues, blockers, and recent changes.
 - Inspect repositories only where needed to verify delivery state or risk.
 - Start read-only and produce the review before proposing mutations.
-- Ask one decision question at a time with `request_founder_input` and your recommendation, then stop so the orchestrator can resume this same session with the answer.
+- Ask one decision question at a time directly in the session with your recommendation, then stop and wait for the answer.
 - Protect the one-Now-outcome and one-major-engineering-WIP limits.
 - Do not create tickets for unshaped ideas discovered during the review.
 
