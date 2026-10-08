@@ -50,7 +50,7 @@ Run `/reload` in pi after installation.
 
 - `implement-ticket` owns Todo → In Progress when implementation actually starts.
 - `open-pr` owns In Progress → In Review after the PR opens.
-- `release-ticket` owns exact-SHA candidate/promotion mechanics and release evidence; it never changes ticket/project state or deploys overlays.
+- `release-ticket` owns the `release.yml` dispatch at an exact master SHA and its release evidence; it never changes ticket/project state or deploys overlays.
 - `accept-ticket` owns In Review → Done after merge, including publication evidence when required.
 - `product-release-review` owns outcome-project completion and product learning.
 - Only the user merges PRs.

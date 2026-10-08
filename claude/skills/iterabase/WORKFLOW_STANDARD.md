@@ -1,11 +1,11 @@
-# Pi workflow standard
+# Iterabase workflow standard (Claude Code)
 
-This is the runtime encoding format for `Areas/ho/Product Management Operating System.md` in the `2nd-brain` vault. That operating-system note owns product-management and integrated engineering-lifecycle semantics. If this file, a skill, an extension, or a dispatcher disagrees with it, stop and surface the drift; executable code must not silently redefine the canonical process.
+This is the runtime encoding format for `Areas/ho/Product Management Operating System.md` in the `2nd-brain` vault. That operating-system note owns product-management and integrated engineering-lifecycle semantics. If this file, a skill, a plugin tool or hook, or a dispatcher disagrees with it, stop and surface the drift; executable code must not silently redefine the canonical process.
 
 All Iterabase product and engineering workflows follow the same separation:
 
 - **Skills own judgment:** evidence gathering, interpretation, trade-offs, questions, and decisions.
-- **Extensions own deterministic mechanics:** commands, routing, protocol state, invariant checks, and integration tools.
+- **Plugin MCP servers and hooks own deterministic mechanics:** routing commands, protocol state, invariant checks, guards, and integration tools.
 - **Canonical systems own durable state:** Obsidian for product, Linear for delivery, repositories for implementation, and GitHub for PR/review state.
 
 ## Skill format
@@ -33,7 +33,7 @@ Complex existing skills may retain additional domain sections, but must preserve
 
 A lower layer cannot silently redefine a higher layer. Conflicts require an explicit product rescope or architecture decision.
 
-An architectural decision is approved only when the founder explicitly accepts the exact decision and its scope, and that approval is recorded durably in the Linear ticket or an Obsidian decision note. Use a stable `DES-<TICKET>-NN` identifier and record the decision, approver, approval date, scope, consequences, and canonical evidence link. A Pi/session transcript or an agent's assertion that approval happened is not approval evidence.
+An architectural decision is approved only when the founder explicitly accepts the exact decision and its scope, and that approval is recorded durably in the Linear ticket or an Obsidian decision note. Use a stable `DES-<TICKET>-NN` identifier and record the decision, approver, approval date, scope, consequences, and canonical evidence link. A Claude Code, Pi, or other session transcript or an agent's assertion that approval happened is not approval evidence.
 
 ## Standard mutation sequence
 
@@ -65,7 +65,7 @@ branch     <TICKET>-<short-description>    checked out in that worktree
 - `address-review` replies and the response summary are refused unless the ticket worktree exists, is clean, and its HEAD equals the PR head.
 - `accept-ticket` removes the worktree after the ticket reaches Done; release verification worktrees are detached at an exact SHA and always removed.
 
-Once the ticket branch is checked out in its worktree, git refuses to check it out in the primary checkout, so the boundary is structural rather than advisory. Stages that only read canonical systems (`code-review`, `accept-ticket`) need no checkout at all, and a review session may run in the primary checkout read-only.
+Once the ticket branch is checked out in its worktree, git refuses to check it out in the primary checkout, so the boundary is structural rather than advisory. Stages that only read canonical systems (`review-pr`, `accept-ticket`) need no checkout at all, and a review session may run in the primary checkout read-only.
 
 ## Standard ticket format
 
@@ -112,16 +112,16 @@ The design workflow is mandatory when user-visible behavior needs a new accepted
 
 ## Review and acceptance session roles
 
-The implementation and every `address-review` round share one **author** Pi session. The first `code-review` starts one separate **reviewer** session for the PR, and every re-review continues that reviewer session. Reviewer and author context never mix. Every completed `accept-ticket` invocation is discarded; preflight and post-merge acceptance each start a fresh **acceptance** session.
+The implementation and every `address-review` round share one **author** Claude Code session. The first `review-pr` starts one separate **reviewer** session for the PR, and every re-review continues that reviewer session. Reviewer and author context never mix. Every completed `accept-ticket` invocation is discarded; preflight and post-merge acceptance each start a fresh **acceptance** session.
 
 Role continuity is working memory, not authority. Every continued round re-reads GitHub markers, the current PR head, CI, Linear, Obsidian, and repository state. If the original author session is unavailable for a legacy PR, one fresh recovery author session may be created and then reused for later remediation rounds.
 
-One orchestrating conversation — a chat session, a dispatched Codex task, or a Pi session — may drive the complete loop because GitHub review markers, CI, Linear, Obsidian, and repository state are the handoff—not Pi conversation memory:
+One orchestrating conversation — a chat session, a dispatched Codex task, or a Claude Code or Pi session — may drive the complete loop because GitHub review markers, CI, Linear, Obsidian, and repository state are the handoff—not conversation memory:
 
 ```text
 accept-ticket preflight
-  → code-review reviewer session
-  → (address-review author session → code-review reviewer session)*
+  → review-pr reviewer session
+  → (address-review author session → review-pr reviewer session)*
   → reviewer final
   → founder merge
   → accept-ticket final
@@ -129,14 +129,14 @@ accept-ticket preflight
 
 Skip `address-review` in a round with no developer-owned findings. The terminal review decision remains reviewer-owned, and merge remains founder-owned.
 
-## Extension rules
+## Plugin rules
 
-- Commands are thin primers that load the matching skill.
+- Command aliases are thin primers that load the matching skill (`disable-model-invocation` skills).
 - Protocol invariants belong in tools/hooks, not repeated prompt prose.
-- Extensions discover only the skills they own to avoid collisions.
+- The plugin namespaces its skills (`iterabase:<skill>`); `review-pr` is named to avoid the built-in `/code-review`.
 - Workflow state must be reconstructable from canonical systems.
 - Session state may improve UX but must not become a hidden source of truth.
-- `address-review` continues the implementation author session; all `code-review` rounds for one PR continue a separate reviewer session; acceptance is always fresh.
+- `address-review` continues the implementation author session; all `review-pr` rounds for one PR continue a separate reviewer session; acceptance is always fresh.
 - A workflow that needs a founder decision asks the founder one question with a recommended answer directly in the session, then stops. The run stops there rather than proceeding on a guess: no dependent tool call follows, and the run resumes with the answer in the next turn of the same session.
 - Every created or updated PR head must reach a successful terminal CI state before the owning workflow completes. A missing, failed, cancelled, timed-out, or superseded check run is not success.
 - Workspace invariants are tool-enforced refusals, not prose reminders: primary-checkout detection, the worktree path convention, cleanliness, and exact-head matching live in the tools.

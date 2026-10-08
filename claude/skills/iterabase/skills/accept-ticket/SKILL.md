@@ -1,6 +1,7 @@
 ---
 name: accept-ticket
 description: Preflight or accept an engineering ticket by inspecting its PR and review convergence, routing an open PR into the next isolated review stage, or—after merge—verifying acceptance criteria, validation, production impact, and required publication evidence before moving Linear from In Review to Done. Use via /accept-ticket HOR-123.
+argument-hint: "<HOR-123>"
 ---
 
 # Accept Ticket
@@ -21,7 +22,7 @@ If they conflict, do not mark Done. Require an explicit rescope or remediation d
 
 ## Rules
 
-- Every invocation is a fresh acceptance Pi session. Reconstruct evidence from canonical systems; never reuse implementation, review, remediation, or prior acceptance sessions.
+- Every invocation is a fresh acceptance Claude Code session. Reconstruct evidence from canonical systems; never reuse implementation, review, remediation, or prior acceptance sessions.
 - Start read-only.
 - Fetch the complete issue, project, relations, and relevant PRD before deciding.
 - Verify evidence; do not infer acceptance from a merged state alone.
@@ -49,9 +50,9 @@ Use `gh` for reads. Capture the PR URL, state, head commit, CI/check conclusions
 
 If the PR is open, do not run the post-merge acceptance steps. Inspect GitHub review markers and thread state read-only with `review_list_findings`, `review_reconcile_threads`, and PR comment reads, then stop with exactly one next action:
 
-- No review round exists → `/code-review <PR>`.
+- No review round exists → `/review-pr <PR>`.
 - A review has open or contested developer-owned findings → `/address-review <PR>`.
-- Developer responses await reviewer verification, or the prior review is non-terminal → continue `/code-review <PR>` in that PR's reviewer session.
+- Developer responses await reviewer verification, or the prior review is non-terminal → continue `/review-pr <PR>` in that PR's reviewer session.
 - The reviewer terminal marker exists and no thread remains unresolved → founder merge approval/action.
 
 If the PR is closed without merge, block acceptance and report the required remediation decision. A non-code ticket may continue only with equivalent completion evidence.
@@ -62,7 +63,7 @@ If the PR is merged, capture its merge commit and continue to review convergence
 
 Check:
 
-- No pending `code-review` round
+- No pending `review-pr` round
 - No open or contested protocol findings
 - No unresolved GitHub review-thread drift
 - Terminal marker or explicit user-approved review exception
