@@ -18,7 +18,7 @@ const workflows = [
   {
     command: "release-ticket",
     skill: "release-ticket",
-    label: "Release ticket — validate, candidate, approve, and promote exact artifacts",
+    label: "Release ticket — plan, fully validate, approve, and promote the tested artifacts",
     usage: "/release-ticket <HOR-123> [--targets target-a,target-b]",
   },
   {
