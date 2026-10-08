@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "linear": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/servers/linear/index.ts"]
+    },
+    "review": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/servers/review/index.ts"]
+    }
+  }
+}

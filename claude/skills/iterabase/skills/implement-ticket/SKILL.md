@@ -1,6 +1,7 @@
 ---
 name: implement-ticket
 description: Execute an engineering ticket from Linear through validated implementation, commits, automatic PR creation, CI completion, and the In Review transition. Use when starting work on HOR-123 or invoking /start-ticket.
+argument-hint: "<HOR-123>"
 ---
 
 # Implement Ticket
@@ -203,4 +204,4 @@ Report:
 - Production impact and semantic publication classification
 - Approved design-decision identifiers and canonical evidence
 - Warnings or accepted exceptions
-- Exact next command: `/code-review <PR>`
+- Exact next command: `/review-pr <PR>`

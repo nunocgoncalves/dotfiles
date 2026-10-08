@@ -1,0 +1,10 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "iterabase",
+  "version": "1.0.0",
+  "description": "Iterabase product and engineering workflows: Linear tools, the review-pr ⇄ address-review protocol, ticket worktrees, product-management skills, and macOS notifications.",
+  "author": {
+    "name": "N. Goncalves",
+    "email": "nuno@nunocgoncalves.com"
+  }
+}

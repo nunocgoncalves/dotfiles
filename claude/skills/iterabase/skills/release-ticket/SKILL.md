@@ -1,6 +1,7 @@
 ---
 name: release-ticket
 description: Publish semantic artifacts for a merged Linear ticket through the repository's founder-approved release workflow at an exact master SHA, verify the promoted digests, attestations and immutable Releases, and return to the owning acceptance or product release gate. Use after merge when ticket acceptance requires publication, after an approved deferred product release decision, or via /release-ticket HOR-123.
+argument-hint: "<HOR-123> [--targets target-a,target-b]"
 ---
 
 # Release Ticket
