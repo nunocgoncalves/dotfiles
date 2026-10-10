@@ -35,6 +35,7 @@ path the consuming tool expects:
 | `tmux/` | `~/.config/tmux/` |
 | `k9s/` | `~/Library/Application Support/k9s/` |
 | `pi/` | `~/.pi/` — `settings.json`, `keybindings.json`, `extensions/macos-notify.ts` |
+| `claude/` | `~/.claude/` — `skills/iterabase` Claude Code plugin (workflows ported from `pi/`) |
 | `homebrew/` | *(not stowed — reference only)* |
 
 ## Adding a new config
