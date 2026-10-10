@@ -10,6 +10,12 @@
  *   worktree   <root>/<repo>/<TICKET>          root = $PI_WORKTREE_ROOT || ~/Developer/worktrees
  *   branch     <TICKET>-<short-description>    checked out in that worktree
  *
+ * A PR reference may name another repository than the session's (an overlay
+ * PR reviewed from a monorepo session). Its primary checkout is the session
+ * repository itself when one of its remotes is that GitHub repository, else the
+ * sibling directory `<parent of the session's primary checkout>/<name>` whose
+ * remote is. Nothing else is guessed: an unresolvable repository is an error.
+ *
  * The primary checkout is identified without heuristics: in a linked worktree
  * `git rev-parse --git-dir` differs from `--git-common-dir`. Once the ticket
  * branch is checked out in the ticket worktree, git itself refuses to check it
@@ -54,6 +60,23 @@ export function normalizeTicketId(ticketId: string): string {
 export function ticketIdFromBranch(branch: string): string | null {
   const match = branch.trim().match(/^([A-Z]+-\d+)-[^/]+$/i);
   return match ? match[1].toUpperCase() : null;
+}
+
+/** `owner/name` of a GitHub remote URL (https, ssh, or scp-style), or null. */
+export function githubSlugFromRemote(url: string): string | null {
+  const match = url
+    .trim()
+    .match(/^(?:https?:\/\/(?:[^@/]+@)?|ssh:\/\/(?:[^@/]+@)?|[^@/:]+@)?(?:www\.)?github\.com[:/]([\w.-]+)\/([\w.-]+?)(?:\.git)?\/?$/i);
+  return match ? `${match[1]}/${match[2]}` : null;
+}
+
+/** Conventional primary checkout of `repo` ("owner/name"): a sibling of `primaryRoot`. */
+export function siblingCheckoutPath(primaryRoot: string, repo: string): string {
+  const name = repo.split("/")[1] ?? "";
+  if (!/^[\w.-]+$/.test(name) || name === "." || name === "..") {
+    throw new Error(`Invalid GitHub repository "${repo}" (expected owner/name).`);
+  }
+  return join(dirname(primaryRoot), name);
 }
 
 /**
@@ -167,6 +190,47 @@ export async function repoIdentity(host: Host, opts: ExecOpts): Promise<RepoIden
   const isPrimaryCheckout = gitDir === commonDir;
   const primaryRoot = isPrimaryCheckout ? toplevel : canonicalPath(dirname(commonDir));
   return { primaryRoot, toplevel, gitDir, commonDir, isPrimaryCheckout, repo: basename(primaryRoot) };
+}
+
+async function remoteSlugs(host: Host, cwd: string, signal?: AbortSignal): Promise<string[]> {
+  const res = await git(host, cwd, ["config", "--get-regexp", "^remote\\..*\\.url$"], signal);
+  if (res.code !== 0) return [];
+  return res.stdout
+    .split("\n")
+    .map((line) => githubSlugFromRemote(line.trim().split(/\s+/)[1] ?? ""))
+    .filter((slug): slug is string => slug !== null)
+    .map((slug) => slug.toLowerCase());
+}
+
+/**
+ * Identity of `repo` ("owner/name", from a PR reference); the session's own
+ * repository when `repo` is unset. Fails closed when no primary checkout of
+ * `repo` can be found — it never falls back to the session's repository.
+ */
+export async function repoIdentityFor(host: Host, opts: ExecOpts, repo?: string): Promise<RepoIdentity> {
+  const session = await repoIdentity(host, opts);
+  if (!repo) return session;
+  const wanted = repo.toLowerCase();
+  if ((await remoteSlugs(host, session.primaryRoot, opts.signal)).includes(wanted)) return session;
+
+  const candidate = siblingCheckoutPath(session.primaryRoot, repo);
+  const notFound = (reason: string): never => {
+    throw new Error(
+      `The PR belongs to ${repo}, not the session's repository (${session.primaryRoot}), and ${reason}. ` +
+        `Clone ${repo} to ${candidate} (a sibling of the session's primary checkout) or start the session in it.`,
+    );
+  };
+  if (!existsSync(candidate)) notFound(`no checkout of it exists at ${candidate}`);
+  const identity = await repoIdentity(host, { ...opts, cwd: candidate }).catch(() =>
+    notFound(`${candidate} is not a git repository`),
+  );
+  if (identity.primaryRoot !== canonicalPath(candidate)) {
+    notFound(`${candidate} is not a primary checkout`);
+  }
+  if (!(await remoteSlugs(host, identity.primaryRoot, opts.signal)).includes(wanted)) {
+    notFound(`${candidate} has no remote for github.com/${repo}`);
+  }
+  return identity;
 }
 
 /** `<root>/<repo>/<TICKET>` — the only sanctioned ticket worktree path. */
@@ -292,7 +356,7 @@ export async function inspectWorktree(
 
   let checkedOutElsewhere: string | null = null;
   if (branch) {
-    const others = await listWorktrees(host, opts);
+    const others = await listWorktrees(host, { ...opts, cwd: identity.primaryRoot });
     const owner = others.find(
       (entry) => entry.branch === branch && canonicalPath(entry.path) !== resolvedPath,
     );
@@ -344,13 +408,17 @@ async function branchesForTicket(
  */
 export async function ensureTicketWorktree(
   host: Host,
-  opts: ExecOpts,
+  sessionOpts: ExecOpts,
   ticketIdRaw: string,
   branch?: string,
   base?: string,
+  repo?: string,
 ): Promise<EnsureResult> {
   const ticketId = normalizeTicketId(ticketIdRaw);
-  const identity = await repoIdentity(host, opts);
+  const identity = await repoIdentityFor(host, sessionOpts, repo);
+  // Repository-level git commands run in the owning repository's primary
+  // checkout, which is the session's own repository unless `repo` names another.
+  const opts: ExecOpts = { ...sessionOpts, cwd: identity.primaryRoot };
   const path = ticketWorktreePath(identity, ticketId);
   await pruneWorktrees(host, opts);
 
@@ -434,12 +502,14 @@ export interface RemoveResult {
 /** Remove the dedicated ticket worktree after merge/acceptance. */
 export async function removeTicketWorktree(
   host: Host,
-  opts: ExecOpts,
+  sessionOpts: ExecOpts,
   ticketIdRaw: string,
   force = false,
+  repo?: string,
 ): Promise<RemoveResult> {
   const ticketId = normalizeTicketId(ticketIdRaw);
-  const identity = await repoIdentity(host, opts);
+  const identity = await repoIdentityFor(host, sessionOpts, repo);
+  const opts: ExecOpts = { ...sessionOpts, cwd: identity.primaryRoot };
   const state = await inspectWorktree(host, opts, identity, ticketId);
 
   if (!state.exists) {
@@ -477,7 +547,7 @@ export interface WorktreeRequirement {
 
 /**
  * Hard boundary gate: the convention worktree must exist, be a linked worktree
- * of this repository, hold a `<TICKET>-*` branch, and (by default) be clean.
+ * of this repository (or of `repo`, the PR's repository, when given), hold a `<TICKET>-*` branch, and (by default) be clean.
  * Throws an actionable error naming the convention path.
  */
 export async function requireTicketWorktree(
@@ -485,9 +555,10 @@ export async function requireTicketWorktree(
   opts: ExecOpts,
   ticketIdRaw: string,
   requirement: WorktreeRequirement,
+  repo?: string,
 ): Promise<{ identity: RepoIdentity; state: WorktreeState }> {
   const ticketId = normalizeTicketId(ticketIdRaw);
-  const identity = await repoIdentity(host, opts);
+  const identity = await repoIdentityFor(host, opts, repo);
   const state = await inspectWorktree(host, opts, identity, ticketId);
   const convention = `${ticketWorktreePath(identity, ticketId)} (branch ${ticketId}-<description>)`;
   const fail = (reason: string): never => {

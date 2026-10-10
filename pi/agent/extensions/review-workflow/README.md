@@ -40,8 +40,10 @@ marker exactly once." Code is good at exactly that. So:
 | `review_resolve_thread` | Reviewer accepts one verified response. | Refuses address mode; idempotent and paginated. |
 | `review_reconcile_threads` | Read-only audit of developer/reviewer queues. | `fix=true` is rejected; no automatic reconciliation. |
 | `open_pr` | Open a convention-correct PR and wait for CI. | Latest head must pass every check; absence or supersession blocks. Does not merge. |
-| `worktree_ensure` | Create or reuse the dedicated ticket worktree. | Convention path `<root>/<repo>/<TICKET>`; refuses while the primary checkout still holds the branch; reuse never resets work. |
+| `worktree_ensure` | Create or reuse the dedicated ticket worktree. | Convention path `<root>/<repo>/<TICKET>` (the `pr` argument's repository when given); refuses while the primary checkout still holds the branch; reuse never resets work. |
 | `worktree_remove` | Remove the ticket worktree after merge/acceptance. | Refuses a dirty worktree unless `force=true`; prunes stale metadata. |
+
+A `pr` argument is a PR URL, `owner/repo#N`, or a bare number. A URL or `owner/repo#N` scopes every `gh` call (`-R`, `repos/<owner>/<repo>/…`, GraphQL owner/name) and every ticket-worktree check to that repository, whose primary checkout is the session's repository or its sibling directory of the same name; an unresolvable repository is an error. A bare number uses the session's repository.
 
 ## The state machine (via GitHub markers alone)
 

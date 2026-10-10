@@ -5,8 +5,10 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import {
   detectPrimaryCheckoutSync,
+  githubSlugFromRemote,
   normalizeTicketId,
   parseWorktreeList,
+  siblingCheckoutPath,
   ticketIdFromBranch,
   worktreeRoot,
 } from "./worktrees";
@@ -81,5 +83,26 @@ describe("primary checkout detection", () => {
     } finally {
       rmSync(root, { recursive: true, force: true });
     }
+  });
+});
+
+describe("PR repository checkouts", () => {
+  test("reads owner/name from GitHub remotes only", () => {
+    expect(githubSlugFromRemote("https://github.com/iterabase/iterabase-overlay-opo1.git")).toBe(
+      "iterabase/iterabase-overlay-opo1",
+    );
+    expect(githubSlugFromRemote("git@github.com:iterabase/iterabase-mono.git")).toBe("iterabase/iterabase-mono");
+    expect(githubSlugFromRemote("ssh://git@github.com/o/r")).toBe("o/r");
+    expect(githubSlugFromRemote("https://token@github.com/o/r.js/")).toBe("o/r.js");
+    expect(githubSlugFromRemote("https://gitlab.com/o/r.git")).toBeNull();
+    expect(githubSlugFromRemote("/tmp/origin.git")).toBeNull();
+  });
+
+  test("the conventional checkout of another repository is a sibling of the session's", () => {
+    expect(siblingCheckoutPath("/src/iterabase-mono", "iterabase/iterabase-overlay-opo1")).toBe(
+      "/src/iterabase-overlay-opo1",
+    );
+    expect(() => siblingCheckoutPath("/src/iterabase-mono", "iterabase/..")).toThrow(/Invalid GitHub repository/);
+    expect(() => siblingCheckoutPath("/src/iterabase-mono", "no-slash")).toThrow(/Invalid GitHub repository/);
   });
 });

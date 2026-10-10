@@ -37,13 +37,15 @@ import {
   listIssueComments,
   listReviewComments,
   listReviewThreads,
+  parsePrRef,
   postInlineReviewComment,
   postIssueComment,
   postReviewCommentReply,
   postReviewEvent,
   prDiff,
   prMeta,
-  repoSlug,
+  prRepoArgs,
+  prRepoSlug,
   resolveReviewThread,
   type ExecOpts,
   type IssueComment,
@@ -59,6 +61,7 @@ import {
   inspectWorktree,
   removeTicketWorktree,
   repoIdentity,
+  repoIdentityFor,
   requireTicketWorktree,
   ticketIdFromBranch,
   ticketWorktreePath,
@@ -85,28 +88,32 @@ function err(t: string): ToolResult {
  * Developer-side workspace gate: replies and response summaries must come from
  * the dedicated ticket worktree at the PR head, never the primary checkout.
  * Legacy branches without a `<TICKET>-` prefix are reported, not blocked.
+ * The worktree is resolved in the PR's repository (`pr` may name another
+ * repository than the session's).
  */
 async function requireAddressWorkspace(
   pi: ExtensionAPI,
   opts: ExecOpts,
+  pr: string | number,
   headBranch: string,
   requirement: { action: string; requireHead?: string; requireClean?: boolean },
 ): Promise<{ ticketId: string; state: WorktreeState } | null> {
   const ticketId = ticketIdFromBranch(headBranch);
   if (!ticketId) return null;
-  return { ticketId, ...(await requireTicketWorktree(pi, opts, ticketId, requirement)) };
+  return { ticketId, ...(await requireTicketWorktree(pi, opts, ticketId, requirement, parsePrRef(pr).repo)) };
 }
 
 /** Read-only workspace report for review_init; never throws. */
 async function workspaceReport(
   pi: ExtensionAPI,
   opts: ExecOpts,
+  pr: string | number,
   headBranch: string,
 ): Promise<Record<string, unknown> | null> {
   const ticketId = ticketIdFromBranch(headBranch);
   if (!ticketId) return null;
   try {
-    const identity = await repoIdentity(pi, opts);
+    const identity = await repoIdentityFor(pi, opts, parsePrRef(pr).repo);
     const state = await inspectWorktree(pi, opts, identity, ticketId);
     return {
       ticketId,
@@ -169,6 +176,7 @@ async function waitForPrCi(
   const noChecksDeadline = startedAt + 2 * 60_000;
   const deadline = startedAt + 45 * 60_000;
   let observedHead = "";
+  const repoArgs = prRepoArgs(parsePrRef(pr));
 
   while (Date.now() < deadline) {
     const meta = await prMeta(pi, opts, pr);
@@ -178,6 +186,7 @@ async function waitForPrCi(
       "pr",
       "checks",
       String(meta.number),
+      ...repoArgs,
       "--json",
       "bucket,link,name,state,workflow",
     ]);
@@ -296,10 +305,13 @@ async function assessTicketTraceability(
 
 const slugCache = new Map<string, string>();
 
-async function getSlug(pi: ExtensionAPI, opts: ExecOpts): Promise<string> {
+/** The PR's repository: the one its reference names, else the session's (cached per cwd). */
+async function getSlug(pi: ExtensionAPI, opts: ExecOpts, pr: string | number): Promise<string> {
+  const named = parsePrRef(pr).repo;
+  if (named) return named;
   let s = slugCache.get(opts.cwd);
   if (!s) {
-    s = await repoSlug(pi, opts);
+    s = await prRepoSlug(pi, opts, pr);
     slugCache.set(opts.cwd, s);
   }
   return s;
@@ -431,7 +443,7 @@ export function registerReviewTools(pi: ExtensionAPI): void {
       try {
         const opts: ExecOpts = { cwd: ctx.cwd, signal };
         const ci = params.mode === "review" ? await waitForPrCi(pi, opts, params.pr) : undefined;
-        const slug = await getSlug(pi, opts);
+        const slug = await getSlug(pi, opts, params.pr);
         const meta = await prMeta(pi, opts, params.pr);
         const pr = meta.number;
         const sums = await summaries(pi, opts, slug, pr);
@@ -449,7 +461,7 @@ export function registerReviewTools(pi: ExtensionAPI): void {
         saveState(pi, st);
 
         const workspace =
-          params.mode === "address" ? await workspaceReport(pi, opts, meta.headRefName) : null;
+          params.mode === "address" ? await workspaceReport(pi, opts, params.pr, meta.headRefName) : null;
 
         return text(
           JSON.stringify(
@@ -499,7 +511,7 @@ export function registerReviewTools(pi: ExtensionAPI): void {
     async execute(_id, params, signal, _onUpdate, ctx) {
       try {
         const opts: ExecOpts = { cwd: ctx.cwd, signal };
-        const slug = await getSlug(pi, opts);
+        const slug = await getSlug(pi, opts, params.pr);
         const meta = await prMeta(pi, opts, params.pr);
         const pr = meta.number;
         let findings = await allFindings(pi, opts, slug, pr);
@@ -548,7 +560,7 @@ export function registerReviewTools(pi: ExtensionAPI): void {
     async execute(_id, params, signal, _onUpdate, ctx) {
       try {
         const opts: ExecOpts = { cwd: ctx.cwd, signal };
-        const slug = await getSlug(pi, opts);
+        const slug = await getSlug(pi, opts, params.pr);
         const meta = await prMeta(pi, opts, params.pr);
         const pr = meta.number;
 
@@ -610,7 +622,7 @@ export function registerReviewTools(pi: ExtensionAPI): void {
     async execute(_id, params, signal, _onUpdate, ctx) {
       try {
         const opts: ExecOpts = { cwd: ctx.cwd, signal };
-        const slug = await getSlug(pi, opts);
+        const slug = await getSlug(pi, opts, params.pr);
         const meta = await prMeta(pi, opts, params.pr);
         const pr = meta.number;
 
@@ -663,11 +675,11 @@ export function registerReviewTools(pi: ExtensionAPI): void {
     async execute(_id, params, signal, _onUpdate, ctx) {
       try {
         const opts: ExecOpts = { cwd: ctx.cwd, signal };
-        const slug = await getSlug(pi, opts);
+        const slug = await getSlug(pi, opts, params.pr);
         const meta = await prMeta(pi, opts, params.pr);
         const pr = meta.number;
 
-        const workspace = await requireAddressWorkspace(pi, opts, meta.headRefName, {
+        const workspace = await requireAddressWorkspace(pi, opts, params.pr, meta.headRefName, {
           action: "review_post_reply",
           requireHead: meta.headRefOid,
         });
@@ -739,7 +751,7 @@ export function registerReviewTools(pi: ExtensionAPI): void {
     async execute(_id, params, signal, _onUpdate, ctx) {
       try {
         const opts: ExecOpts = { cwd: ctx.cwd, signal };
-        const slug = await getSlug(pi, opts);
+        const slug = await getSlug(pi, opts, params.pr);
         const meta = await prMeta(pi, opts, params.pr);
         const pr = meta.number;
 
@@ -810,7 +822,7 @@ export function registerReviewTools(pi: ExtensionAPI): void {
         if (!params.decisionRef.trim()) return err("A durable founder decision reference is required.");
 
         const opts: ExecOpts = { cwd: ctx.cwd, signal };
-        const slug = await getSlug(pi, opts);
+        const slug = await getSlug(pi, opts, params.pr);
         const meta = await prMeta(pi, opts, params.pr);
         const pr = meta.number;
         const inline = await listReviewComments(pi, opts, slug, pr);
@@ -881,11 +893,11 @@ export function registerReviewTools(pi: ExtensionAPI): void {
     async execute(_id, params, signal, _onUpdate, ctx) {
       try {
         const opts: ExecOpts = { cwd: ctx.cwd, signal };
-        const slug = await getSlug(pi, opts);
+        const slug = await getSlug(pi, opts, params.pr);
         const meta = await prMeta(pi, opts, params.pr);
         const pr = meta.number;
 
-        const workspace = await requireAddressWorkspace(pi, opts, meta.headRefName, {
+        const workspace = await requireAddressWorkspace(pi, opts, params.pr, meta.headRefName, {
           action: "review_post_response_summary",
           requireHead: meta.headRefOid,
         });
@@ -901,12 +913,15 @@ export function registerReviewTools(pi: ExtensionAPI): void {
           return err(`Review #${summary.id} already has a response summary. Not posting a duplicate.`);
         }
 
-        const ci = await waitForPrCi(pi, opts, pr);
+        const ci = await waitForPrCi(pi, opts, params.pr);
         if (workspace) {
-          await requireTicketWorktree(pi, opts, workspace.ticketId, {
-            action: "review_post_response_summary",
-            requireHead: ci.headSha,
-          });
+          await requireTicketWorktree(
+            pi,
+            opts,
+            workspace.ticketId,
+            { action: "review_post_response_summary", requireHead: ci.headSha },
+            parsePrRef(params.pr).repo,
+          );
         }
         const findings = await allFindings(pi, opts, slug, pr);
         const counts = { fixed: 0, partial: 0, disagreed: 0, answered: 0, unresolved: 0 };
@@ -990,7 +1005,7 @@ export function registerReviewTools(pi: ExtensionAPI): void {
     async execute(_id, params, signal, _onUpdate, ctx) {
       try {
         const opts: ExecOpts = { cwd: ctx.cwd, signal };
-        const slug = await getSlug(pi, opts);
+        const slug = await getSlug(pi, opts, params.pr);
         const meta = await prMeta(pi, opts, params.pr);
         const pr = meta.number;
         const st = loadState(ctx);
@@ -1010,7 +1025,7 @@ export function registerReviewTools(pi: ExtensionAPI): void {
           );
         }
 
-        const ci = await waitForPrCi(pi, opts, pr);
+        const ci = await waitForPrCi(pi, opts, params.pr);
         const reviewRef = summary?.id ?? "initial";
         const body = `## Review complete\n\nNo findings, no open questions — the reviewer explicitly concludes the review loop has converged for ${ci.headSha}. Ready to merge (per AGENTS.md, only the user merges).\n\n<!-- pi-code-review-terminal review=${reviewRef} -->`;
         const c = await postIssueComment(pi, opts, slug, pr, body);
@@ -1040,7 +1055,7 @@ export function registerReviewTools(pi: ExtensionAPI): void {
         const opts: ExecOpts = { cwd: ctx.cwd, signal };
         const st = loadState(ctx);
         if (st?.mode !== "review") return err("Only a reviewer-mode session may resolve review threads.");
-        const slug = await getSlug(pi, opts);
+        const slug = await getSlug(pi, opts, params.pr);
         const meta = await prMeta(pi, opts, params.pr);
         const pr = meta.number;
         const threads: ReviewThreadInfo[] = await listReviewThreads(pi, opts, slug, pr);
@@ -1082,7 +1097,7 @@ export function registerReviewTools(pi: ExtensionAPI): void {
     async execute(_id, params, signal, _onUpdate, ctx) {
       try {
         const opts: ExecOpts = { cwd: ctx.cwd, signal };
-        const slug = await getSlug(pi, opts);
+        const slug = await getSlug(pi, opts, params.pr);
         const meta = await prMeta(pi, opts, params.pr);
         const pr = meta.number;
         if (params.fix === true) {
@@ -1137,6 +1152,12 @@ export function registerReviewTools(pi: ExtensionAPI): void {
       base: Type.Optional(
         Type.String({ description: "Base branch for a newly created ticket branch. Defaults to the repository default branch." }),
       ),
+      pr: Type.Optional(
+        Type.String({
+          description:
+            "PR URL or owner/repo#N whose repository owns the ticket (e.g. an overlay PR from a monorepo session). Defaults to the session's repository.",
+        }),
+      ),
     }),
     async execute(_id, params, signal, _onUpdate, ctx) {
       try {
@@ -1146,6 +1167,7 @@ export function registerReviewTools(pi: ExtensionAPI): void {
           params.ticketId,
           params.branch,
           params.base,
+          params.pr ? parsePrRef(params.pr).repo : undefined,
         );
         const { state, identity } = result;
         return text(
@@ -1176,6 +1198,11 @@ export function registerReviewTools(pi: ExtensionAPI): void {
       force: Type.Optional(
         Type.Boolean({ description: "Discard uncommitted changes in the worktree (default false)." }),
       ),
+      pr: Type.Optional(
+        Type.String({
+          description: "PR URL or owner/repo#N whose repository owns the ticket. Defaults to the session's repository.",
+        }),
+      ),
     }),
     async execute(_id, params, signal, _onUpdate, ctx) {
       try {
@@ -1184,6 +1211,7 @@ export function registerReviewTools(pi: ExtensionAPI): void {
           { cwd: ctx.cwd, signal },
           params.ticketId,
           params.force === true,
+          params.pr ? parsePrRef(params.pr).repo : undefined,
         );
         return text(
           result.removed
