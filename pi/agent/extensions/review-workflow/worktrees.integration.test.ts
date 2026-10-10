@@ -16,6 +16,7 @@ import {
   inspectWorktree,
   removeTicketWorktree,
   repoIdentity,
+  repoIdentityFor,
   requireTicketWorktree,
   ticketWorktreePath,
 } from "./worktrees";
@@ -42,6 +43,7 @@ function git(args: string[], cwd: string): { code: number; stdout: string } {
 
 let sandbox = "";
 let primary = "";
+let overlay = "";
 let worktreeRoot = "";
 let savedRoot: string | undefined;
 
@@ -62,6 +64,21 @@ beforeAll(() => {
   git(["add", "-A"], primary);
   git(["commit", "-m", "init"], primary);
   git(["push", "-u", "origin", "master"], primary);
+  // GitHub identities for PR-repository resolution; never fetched.
+  git(["remote", "add", "github", "https://github.com/acme/mono.git"], primary);
+
+  // A second repository checked out as a sibling of the session's primary checkout.
+  const overlayOrigin = join(sandbox, "overlay.git");
+  git(["init", "--bare", "--initial-branch=master", overlayOrigin], sandbox);
+  overlay = join(sandbox, "overlay");
+  git(["clone", overlayOrigin, "overlay"], sandbox);
+  git(["config", "user.email", "test@example.com"], overlay);
+  git(["config", "user.name", "Test"], overlay);
+  writeFileSync(join(overlay, "README.md"), "overlay\n");
+  git(["add", "-A"], overlay);
+  git(["commit", "-m", "init"], overlay);
+  git(["push", "-u", "origin", "master"], overlay);
+  git(["remote", "add", "github", "git@github.com:acme/overlay.git"], overlay);
 });
 
 afterAll(() => {
@@ -146,5 +163,58 @@ describe("ticket worktree boundary", () => {
     const again = await removeTicketWorktree(fakePi, opts(primary), "HOR-1");
     expect(again.removed).toBe(false);
     expect(git(["worktree", "list"], primary).stdout).not.toContain("HOR-1");
+  });
+});
+
+describe("ticket worktrees follow the PR's repository", () => {
+  test("resolves the session repository or its GitHub sibling, never silently the session's", async () => {
+    const own = await repoIdentityFor(fakePi, opts(primary), "Acme/Mono");
+    expect(own.primaryRoot).toBe(primary);
+    expect((await repoIdentityFor(fakePi, opts(primary))).primaryRoot).toBe(primary);
+
+    const other = await repoIdentityFor(fakePi, opts(primary), "acme/overlay");
+    expect(other.primaryRoot).toBe(overlay);
+    expect(other.repo).toBe("overlay");
+
+    await expect(repoIdentityFor(fakePi, opts(primary), "acme/missing")).rejects.toThrow(
+      /belongs to acme\/missing.*no checkout of it exists/s,
+    );
+    await expect(repoIdentityFor(fakePi, opts(primary), "someone-else/overlay")).rejects.toThrow(
+      /has no remote for github.com\/someone-else\/overlay/,
+    );
+  });
+
+  test("ensure, gate, and remove act on <root>/<pr-repo>/<TICKET> from the session's checkout", async () => {
+    const created = await ensureTicketWorktree(
+      fakePi,
+      opts(primary),
+      "HOR-645",
+      "HOR-645-overlay-change",
+      undefined,
+      "acme/overlay",
+    );
+    expect(created.created).toBe(true);
+    expect(created.identity.primaryRoot).toBe(overlay);
+    expect(created.state.path).toBe(join(worktreeRoot, "overlay", "HOR-645"));
+    expect(created.state.linked).toBe(true);
+    expect(git(["worktree", "list"], primary).stdout).not.toContain("HOR-645");
+
+    const gated = await requireTicketWorktree(
+      fakePi,
+      opts(primary),
+      "HOR-645",
+      { action: "review_post_reply", requireHead: created.state.head },
+      "acme/overlay",
+    );
+    expect(gated.state.path).toBe(created.state.path);
+
+    // Without the PR's repository the gate looks in the session's repository.
+    await expect(
+      requireTicketWorktree(fakePi, opts(primary), "HOR-645", { action: "review_post_reply" }),
+    ).rejects.toThrow(/no ticket worktree exists at .*mono\/HOR-645/);
+
+    const removed = await removeTicketWorktree(fakePi, opts(primary), "HOR-645", false, "acme/overlay");
+    expect(removed.removed).toBe(true);
+    expect(git(["worktree", "list"], overlay).stdout).not.toContain("HOR-645");
   });
 });

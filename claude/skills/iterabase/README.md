@@ -61,6 +61,11 @@ is also shared.
 - Reviewer-only tools (`review_resolve_thread`, `review_mark_terminal`,
   `review_require_correction`) require a prior `review_init mode="review"` in
   the same session. The mode survives `--resume` through the state file.
+- A review tool's `pr` is a PR URL, `owner/repo#N`, or a bare number. A URL
+  or `owner/repo#N` scopes every `gh` call and ticket-worktree check to that
+  repository (its primary checkout is the session's repository or the sibling
+  directory of the same name; otherwise the tool fails). A bare number uses
+  the session's repository.
 - `/notify` settings live in `~/.config/iterabase/notify.json`.
 
 ## Tests

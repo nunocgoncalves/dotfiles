@@ -56,10 +56,45 @@ export async function defaultBranch(pi: ExtensionAPI, opts: ExecOpts): Promise<s
   return r.defaultBranchRef.name;
 }
 
-export function normalizePr(pr: string | number): string {
+/**
+ * A parsed PR reference. `repo` ("owner/name") is set when the reference names
+ * its repository; a bare number leaves it unset and resolves against the
+ * working directory's repository, as `gh` does by default.
+ */
+export interface PrRef {
+  repo?: string;
+  number: string;
+}
+
+const GITHUB_PR_URL = /^https?:\/\/(?:www\.)?github\.com\/([\w.-]+)\/([\w.-]+)\/pull\/(\d+)(?:[/?#].*)?$/i;
+const OWNER_REPO_PR = /^([\w.-]+)\/([\w.-]+)#(\d+)$/;
+const BARE_PR = /^#?(\d+)$/;
+
+/**
+ * Parse `https://github.com/o/r/pull/N[/…|?…|#…]`, `o/r#N`, or a bare `N`.
+ * Anything else — including a URL whose repository cannot be read — is an
+ * error, never a silent fallback to the working directory's repository.
+ */
+export function parsePrRef(pr: string | number): PrRef {
   const s = String(pr).trim();
-  const m = s.match(/\/pull\/(\d+)/);
-  return m ? m[1] : s;
+  const bare = s.match(BARE_PR);
+  if (bare) return { number: bare[1] };
+  const m = s.match(GITHUB_PR_URL) ?? s.match(OWNER_REPO_PR);
+  if (m) return { repo: `${m[1]}/${m[2].replace(/\.git$/i, "")}`, number: m[3] };
+  throw new Error(
+    `Could not resolve the repository and number of PR "${s}". ` +
+      `Pass https://github.com/<owner>/<repo>/pull/<n>, <owner>/<repo>#<n>, or a bare PR number for the session's repository.`,
+  );
+}
+
+/** `-R owner/name` for `gh pr …` when the reference names its repository. */
+export function prRepoArgs(ref: PrRef): string[] {
+  return ref.repo ? ["-R", ref.repo] : [];
+}
+
+/** The PR's repository slug: the one it names, else the working directory's. */
+export async function prRepoSlug(pi: ExtensionAPI, opts: ExecOpts, pr: string | number): Promise<string> {
+  return parsePrRef(pr).repo ?? (await repoSlug(pi, opts));
 }
 
 export interface PRMeta {
@@ -75,17 +110,20 @@ export interface PRMeta {
 }
 
 export async function prMeta(pi: ExtensionAPI, opts: ExecOpts, pr: string | number): Promise<PRMeta> {
+  const ref = parsePrRef(pr);
   return ghJson<PRMeta>(pi, opts, [
     "pr",
     "view",
-    normalizePr(pr),
+    ref.number,
+    ...prRepoArgs(ref),
     "--json",
     "number,title,body,headRefName,baseRefName,headRefOid,url,state,commits",
   ]);
 }
 
 export async function prDiff(pi: ExtensionAPI, opts: ExecOpts, pr: string | number): Promise<string> {
-  const res = await gh(pi, opts, ["pr", "diff", normalizePr(pr)]);
+  const ref = parsePrRef(pr);
+  const res = await gh(pi, opts, ["pr", "diff", ref.number, ...prRepoArgs(ref)]);
   if (res.code === 0) return res.stdout;
   // GitHub refuses whole-PR diffs above 20,000 lines (HTTP 406, too_large).
   // The paginated files API still returns each file's patch, which is the
@@ -109,8 +147,8 @@ export function filesToDiff(files: PRFile[]): string {
 }
 
 async function prDiffFromFiles(pi: ExtensionAPI, opts: ExecOpts, pr: string | number): Promise<string> {
-  const slug = await repoSlug(pi, opts);
-  const args = ["api", "--paginate", `repos/${slug}/pulls/${normalizePr(pr)}/files?per_page=100`, "--jq", ".[] | @json"];
+  const slug = await prRepoSlug(pi, opts, pr);
+  const args = ["api", "--paginate", `repos/${slug}/pulls/${parsePrRef(pr).number}/files?per_page=100`, "--jq", ".[] | @json"];
   const res = await gh(pi, opts, args);
   if (res.code !== 0) throw new Error(`gh ${args.join(" ")} failed (code ${res.code}): ${res.stderr.trim()}`);
   const files = res.stdout
@@ -227,7 +265,8 @@ export async function postReviewEvent(
   try {
     const flag =
       event === "approve" ? "--approve" : event === "request_changes" ? "--request-changes" : "--comment";
-    const res = await gh(pi, opts, ["pr", "review", normalizePr(pr), flag, "--body-file", file]);
+    const ref = parsePrRef(pr);
+    const res = await gh(pi, opts, ["pr", "review", ref.number, ...prRepoArgs(ref), flag, "--body-file", file]);
     if (res.code !== 0) throw new Error(`gh pr review failed: ${res.stderr.trim()}`);
   } finally {
     rmSync(dir, { recursive: true, force: true });
