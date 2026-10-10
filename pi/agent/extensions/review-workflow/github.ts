@@ -86,8 +86,38 @@ export async function prMeta(pi: ExtensionAPI, opts: ExecOpts, pr: string | numb
 
 export async function prDiff(pi: ExtensionAPI, opts: ExecOpts, pr: string | number): Promise<string> {
   const res = await gh(pi, opts, ["pr", "diff", normalizePr(pr)]);
-  if (res.code !== 0) throw new Error(`gh pr diff failed: ${res.stderr.trim()}`);
-  return res.stdout;
+  if (res.code === 0) return res.stdout;
+  // GitHub refuses whole-PR diffs above 20,000 lines (HTTP 406, too_large).
+  // The paginated files API still returns each file's patch, which is the
+  // same per-file diff inline comments anchor to.
+  if (/too_large|HTTP 406/.test(res.stderr)) return prDiffFromFiles(pi, opts, pr);
+  throw new Error(`gh pr diff failed: ${res.stderr.trim()}`);
+}
+
+interface PRFile {
+  filename: string;
+  status: string;
+  patch?: string;
+}
+
+/** Rebuild a unified diff from the PR files API (files without a patch, e.g. binary or oversized, are omitted). */
+export function filesToDiff(files: PRFile[]): string {
+  return files
+    .filter((f) => f.patch && f.status !== "removed")
+    .map((f) => `diff --git a/${f.filename} b/${f.filename}\n--- a/${f.filename}\n+++ b/${f.filename}\n${f.patch}\n`)
+    .join("");
+}
+
+async function prDiffFromFiles(pi: ExtensionAPI, opts: ExecOpts, pr: string | number): Promise<string> {
+  const slug = await repoSlug(pi, opts);
+  const args = ["api", "--paginate", `repos/${slug}/pulls/${normalizePr(pr)}/files?per_page=100`, "--jq", ".[] | @json"];
+  const res = await gh(pi, opts, args);
+  if (res.code !== 0) throw new Error(`gh ${args.join(" ")} failed (code ${res.code}): ${res.stderr.trim()}`);
+  const files = res.stdout
+    .split("\n")
+    .filter((line) => line.trim())
+    .map((line) => JSON.parse(line) as PRFile);
+  return filesToDiff(files);
 }
 
 export interface IssueComment {
