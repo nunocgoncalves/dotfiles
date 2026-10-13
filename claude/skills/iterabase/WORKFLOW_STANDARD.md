@@ -27,7 +27,7 @@ Complex existing skills may retain additional domain sections, but must preserve
 ## Standard authority hierarchy
 
 1. **Obsidian PRD and approved product decisions** define product behavior, release boundaries, constraints, and non-goals.
-2. **Linear project/issue** defines the approved delivery outcome or slice and engineering acceptance criteria.
+2. **Linear project/issue** defines the approved delivery outcome or slice and engineering acceptance criteria. Its `Decisions (design review, <date>)` section is the founder-approved detailed contract for that slice; for UI work, its `## Design` section is the reconciled design spec.
 3. **Repository designs and standards** define implementation details and conventions.
 4. **GitHub PR/review state** records proposed implementation and review convergence; it does not redefine scope.
 
@@ -85,7 +85,7 @@ Product tickets link `REQ-*` / `SCN-*`. Defects link reproducible evidence and e
 ## Lifecycle ownership
 
 ```text
-product-design-brief    → optional exploration or pre-engineering design/evidence gate; creates no delivery tickets
+product-design-brief    → optional prototype in a Claude Design artifact (exploration or foundation patterns); creates no delivery tickets and is never a frozen gate
 product-to-engineering  → creates/shapes delivery
 start-ticket            → Todo → In Progress → implementation → PR opened → CI passed → In Review
 open-pr                 → reusable subworkflow; PR opened → CI passed → In Review
@@ -104,11 +104,19 @@ product-discovery
   → optional product-design-brief exploration
   → product-requirements
   → product-roadmap
-  → optional product-design-brief new-design or frozen-design verification
+  → optional product-design-brief foundation/pattern prototype
   → product-to-engineering
 ```
 
-The design workflow is mandatory when user-visible behavior needs a new accepted design or deterministic verification of a frozen design before engineering shaping. Exploration remains non-authoritative until its learning is accepted through the product workflow.
+Product design is done in product code and accepted by the founder on the `pr-<N>` preview environment, collaboratively.
+
+- **The prototype** is the "Delight, trusted (chosen direction)" page of the V2 App Foundation canvas (https://claude.ai/artifact/CtvRvGmeacVMkFBAUgCiiQ). It is the design reference for customer UI, not a pixel spec. Other canvas pages (Command center, experiments, sidebar draft) are superseded and are not references.
+- **The Design System** is mandatory: the Iterabase Design System (https://claude.ai/artifact/B3WS3oBCdjQM3wobDBKxRP), rebranded 2026-10-13, for tokens, components, coworker marks, trust layer and voice. Read its README before UI work. New tokens, patterns or components need founder approval.
+- **Every UI ticket carries a `## Design` section, and it is the design spec:** Prototype (named screens), Design system, Reconciled spec (the concrete design decisions, reconciled between prototype, Design System, functional scope and status model), Process, Raise for approval. Shaping writes it; implementation follows it and never invents design.
+- **Review is collaborative on the preview:** the implementer posts the preview link with desktop and phone screenshots and asks for founder review. Any deviation from the prototype or Design System, new pattern or open design question is raised explicitly for approval (PR comment and the ticket's Decisions) before it is treated as settled. Approved decisions are written back into the ticket's `## Design` section, and into the Design System or prototype only if the founder asks.
+- **New ideas** are prototyped as Claude Design artifacts on the Design System. Once approved, they are reflected in the prototype, then reconciled into tickets. Designer briefs, frozen prototype exports, coverage inventories and SHA-256 conformance are not design gates; the 2026-08 V2 prototypes are reference only.
+
+Decisions are recorded where agents read them: the Linear ticket's `Decisions (design review, <date>)` section is the detailed contract, its `## Design` section is the reconciled design spec for UI work, and the PRD (`Areas/ho/Requirements/Platform V2 — Product Requirements.md`) changes only when requirements change. Never create registers, mutation packets, approval packets or reconciliation drafts.
 
 ## Review and acceptance session roles
 

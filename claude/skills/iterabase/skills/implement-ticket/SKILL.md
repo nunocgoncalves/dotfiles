@@ -25,7 +25,7 @@ The ticket should define outcome, scope, acceptance criteria, non-goals, depende
 ## Authority hierarchy
 
 1. **Obsidian PRD and approved product decisions** — authoritative for product behavior and release boundaries.
-2. **Linear ticket** — authoritative for the approved delivery slice and engineering acceptance criteria.
+2. **Linear ticket** — authoritative for the approved delivery slice and engineering acceptance criteria. Its `Decisions (design review, <date>)` section is the founder-approved detailed contract; read it as the spec alongside the PRD (`Areas/ho/Requirements/Platform V2 — Product Requirements.md`, which supersedes the 2026-08 V2 PRD).
 3. **Repository design and standards** — authoritative for implementation conventions and code-coupled technical contracts.
 
 A lower layer cannot silently redefine a higher layer. If sources conflict, stop and request an explicit product rescope or architecture decision.
@@ -143,6 +143,7 @@ For every approved architectural decision, add or update the canonical record in
 - Update code-coupled docs and runbooks.
 - Avoid speculative abstractions and unrelated cleanup.
 - Re-check acceptance criteria after meaningful scope discoveries.
+- For UI work, read the ticket's `## Design` section (the reconciled design spec), the named screens of the prototype (the "Delight, trusted (chosen direction)" page of the V2 App Foundation canvas (https://claude.ai/artifact/CtvRvGmeacVMkFBAUgCiiQ)) and the Design System README (the Iterabase Design System (https://claude.ai/artifact/B3WS3oBCdjQM3wobDBKxRP)). Build in code with shadcn/ui + Tailwind on the Design System tokens and components. Don't invent design: where the Design section, prototype and Design System disagree or are silent, raise the question for founder approval (PR comment and ticket Decisions) instead of deciding it yourself. A UI ticket without a `## Design` section goes back to `product-to-engineering` first. The prototype is a reference, not a pixel spec; never target hash parity.
 
 ### 7. Validate
 
@@ -177,6 +178,7 @@ Before completion confirm:
 - Required tests pass.
 - Production impact and rollback are understood.
 - Semantic publication is explicitly classified for `open-pr` and later `accept-ticket` routing.
+- UI changes are reviewable on the preview, and the PR requests the founder's design review there.
 - No accidental secrets or unrelated files are present.
 
 ### 10. Open the PR and wait for CI
@@ -184,6 +186,7 @@ Before completion confirm:
 Continue directly into the `open-pr` workflow in the same run:
 
 - Fetch the ticket again and carry its requirement links, validation, production-impact classification, warnings, and approved `DES-*` records into the PR.
+- For UI changes, put the `pr-<N>` preview URL in the PR body with desktop and phone screenshots, and ask the founder to review the design on the preview. List every deviation from the Design section, prototype or Design System, and every new pattern or open design question, under **Raise for approval**. Address founder feedback in follow-up commits on the same PR, and write approved design decisions back into the ticket's `## Design` section and Decisions.
 - Call `open_pr` with the `worktree` path returned by `worktree_ensure`; do not use raw `gh pr create`.
 - The tool refuses a non-convention path, a dirty worktree, a branch that does not match the ticket, and a PR head that differs from the worktree HEAD.
 - The tool waits for all checks on the created head. Do not report completion while checks are missing, pending, failed, cancelled, timed out, or belong to an older head SHA.

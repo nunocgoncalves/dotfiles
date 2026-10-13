@@ -25,7 +25,9 @@ Obsidian governs current product direction and approved requirements. Linear gov
 - Do not infer product priority from engineering effort already spent.
 - Never permanently delete product history by default. Archive notes; cancel Linear work with a reason.
 - Ask founder-decision questions one at a time and include your recommended answer.
+- Record decisions where agents read them: write each founder decision straight into the affected Linear ticket's `Decisions (design review, <date>)` section, and into the PRD only when requirements change. Never create registers, mutation packets, approval packets, reconciliation drafts or other proposal notes; a proposed change set lives in the conversation, then goes directly into tickets once approved.
 - Answer questions from existing evidence yourself before asking the user.
+- For UI tickets, check that the `## Design` section exists, names screens on the prototype (the "Delight, trusted (chosen direction)" page of the V2 App Foundation canvas, never a superseded page) and agrees with the Iterabase Design System; refresh it when the prototype or Design System changes.
 
 ## Workflow
 
@@ -71,7 +73,7 @@ For each Linear project or issue propose one action:
 - `defer`
 - `cancel`
 
-Include the reason, source product decision, replacement artifact if any, and dependency impact. Group proposals by product decision rather than asking about tickets one by one.
+Include the reason, source product decision, replacement artifact if any, and dependency impact. Group proposals by product decision rather than asking about tickets one by one. Present the change set in the conversation; do not write it to a separate proposal note.
 
 ### 4. Resolve decisions
 
@@ -109,6 +111,7 @@ Re-read the resulting Obsidian artifacts and re-query Linear. Confirm:
 - No active product note presents superseded scope as current
 - Every active project links to a current product outcome/PRD
 - Every Todo/In Progress issue has a reason to exist
+- Every open UI ticket has a current `## Design` section referencing the prototype
 - Priority and state semantics follow the operating system
 - Canceled/archived work includes a reason and replacement when relevant
 - No dependency points to canceled or obsolete work without explanation

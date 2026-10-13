@@ -14,7 +14,7 @@ Product-management workflows (process contract: the Obsidian `Areas/ho/Product M
 | `product-housekeeping` | `product-housekeeping` | Housekeeping — reconcile Obsidian and Linear scope |
 | `product-discovery` | `product-discovery` | Discovery — shape a signal or opportunity |
 | `product-requirements` | `product-requirements` | Requirements — write or revise a PRD |
-| `product-design-brief` | `product-design-brief` | Design brief — explore, design, or verify product UX |
+| `product-design-brief` | `product-design-brief` | Prototype ideas or UI patterns as Claude Design artifacts on the Design System; approved ideas go into the prototype, then into tickets' `## Design` sections |
 | `product-roadmap` | `product-roadmap` | Roadmap — prioritize Now / Next / Later |
 | `product-to-engineering` | `product-to-engineering` | Product → Engineering — shape Linear delivery |
 | `product-release-review` | `product-release-review` | Release review — validate outcome and learning |

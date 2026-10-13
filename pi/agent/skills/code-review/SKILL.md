@@ -84,7 +84,7 @@ Then look for the originating spec, in this order:
 When combining sources, apply this authority hierarchy:
 
 1. **Obsidian PRD + approved product decisions** are authoritative for product behavior, release boundaries, constraints, and non-goals.
-2. **The Linear issue** is authoritative for the approved delivery slice and its engineering acceptance criteria. It should identify the relevant `REQ-*` / `SCN-*`, defect evidence, or operational risk.
+2. **The Linear issue** is authoritative for the approved delivery slice and its engineering acceptance criteria. It should identify the relevant `REQ-*` / `SCN-*`, defect evidence, or operational risk. Its `Decisions (design review, <date>)` section is the founder-approved detailed contract: read it fully and treat it as the spec for the slice. The current V2 PRD is `Areas/ho/Requirements/Platform V2 — Product Requirements.md`; the 2026-08 V2 PRD is superseded history.
 3. **Repository technical designs and standards** are authoritative for implementation details and conventions.
 
 The Linear issue may narrow a PRD into one deliverable, but it may not silently contradict or redefine the product. When a ticket and PRD conflict, do not choose whichever is convenient: flag the conflict as a Spec question/finding and require an explicit approved rescope. Legacy issues without product links remain reviewable, but report the traceability gap and use the best available approved source.
@@ -141,6 +141,7 @@ Distinguish hard violations from judgement calls — documented-standard breache
 - (c) behavior outside the approved ticket slice or PRD release boundary (scope creep);
 - (d) implementation that appears to contradict the PRD even if the ticket wording is ambiguous;
 - (e) conflicts between the ticket and PRD that require an explicit product rescope rather than reviewer guesswork.
+- (f) for UI changes: departures from the ticket's `## Design` section (the reconciled spec), its Decisions section, the named prototype screens, or the Iterabase Design System (tokens, components, coworker marks, trust layer, voice), and any new token, pattern or component the founder hasn't approved. An unapproved deviation is a finding, not a judgment call. Design acceptance is the founder's review on the `pr-<N>` preview, never parity with a prototype file or hash; if the PR lacks the preview link, desktop and phone screenshots, the **Raise for approval** list or the founder's design review request, raise it.
 
 Quote the governing line for each finding and name its source: PRD/product decision for product behavior, Linear for the delivery slice, or repository design for implementation. Keep this under 400 words.
 

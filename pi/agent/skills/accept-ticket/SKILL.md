@@ -14,7 +14,7 @@ For an open PR, perform a read-only acceptance preflight and identify the exact 
 ## Authority hierarchy
 
 1. **Obsidian PRD and approved product decisions** — product behavior and release boundary.
-2. **Linear ticket** — delivery slice and acceptance criteria.
+2. **Linear ticket** — delivery slice and acceptance criteria, including its `Decisions (design review, <date>)` section.
 3. **Merged PR/repository** — implementation evidence.
 
 If they conflict, do not mark Done. Require an explicit rescope or remediation decision.
@@ -81,6 +81,7 @@ Extract:
 - Semantic publication classification: required, deferred, or none
 - Non-goals
 - Approved exceptions or rescope decisions
+- The ticket's `Decisions (design review, <date>)` section
 
 Legacy tickets without the standard format require an explicit acceptance interpretation before completion.
 
@@ -116,6 +117,7 @@ Also verify:
 - Documentation/runbooks were updated when required
 - Known failures are represented by approved follow-up defects, not hidden prose
 - The merged diff did not silently expand or contradict product scope
+- For UI changes: durable evidence that the founder approved the design on the `pr-<N>` preview (a PR comment or review, or a Linear note), and every design change approved during review written back into the ticket's `## Design` section. Missing preview approval blocks acceptance; a missing write-back is fixed in the ticket before acceptance. Parity with a frozen prototype file is not required and is not evidence
 
 ### 6. Decide
 

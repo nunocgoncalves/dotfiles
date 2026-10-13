@@ -29,7 +29,8 @@ For a product outcome, the Obsidian PRD and product decisions define behavior an
 - Read the relevant PRD/product decisions for product work, or the concrete evidence/obligation for standalone delivery work, plus active Linear scope and affected repositories before proposing work.
 - Inspect code and repository standards to answer engineering questions yourself.
 - Separate product decisions from engineering decisions.
-- Ask one unresolved founder/product question at a time with a recommended answer.
+- Ask one unresolved founder/product question at a time with a recommended answer, then update the affected tickets immediately once it is answered.
+- Record decisions where agents read them: write each founder decision straight into the affected Linear ticket's `Decisions (design review, <date>)` section, and into the PRD only when requirements change. Never create registers, mutation packets, approval packets, reconciliation drafts or other proposal notes; a proposed change set lives in the conversation, then goes directly into tickets once approved.
 - Prefer vertical, demonstrable deliverables over component-completion epics.
 - A Linear project represents the outcome/release; component names belong in labels and technical scope.
 - Do not create a project for a standalone defect, risk, or operational obligation unless it is genuinely part of a broader approved outcome or release.
@@ -112,6 +113,8 @@ Every issue uses:
 
 ```markdown
 ## Outcome
+## Decisions (design review, <date>)
+## Design (UI tickets: Prototype · Design system · Reconciled spec · Process · Raise for approval)
 ## Product requirements
 ## Scope
 ## Acceptance criteria
@@ -121,7 +124,7 @@ Every issue uses:
 ## Production impact
 ```
 
-Acceptance criteria must be observable and testable. Link exact PRD requirement/scenario identifiers for product work. Defects, risks, and operational obligations instead link concrete evidence or the explicit obligation. `Production impact` must classify semantic publication as **required for ticket acceptance**, **deferred to product release review**, or **none**, with the release boundary or reason; do not silently equate merge with release.
+`Decisions (design review, <date>)` lists the founder-approved choices for the slice in plain language; it is the detailed contract implementers read, so omit it only when there are none. Acceptance criteria must be observable and testable. UI tickets also carry a `## Design` section, which is the design spec: **Prototype** (named screens on the "Delight, trusted (chosen direction)" page of the V2 App Foundation canvas (https://claude.ai/artifact/CtvRvGmeacVMkFBAUgCiiQ)); **Design system** (the parts of the Iterabase Design System (https://claude.ai/artifact/B3WS3oBCdjQM3wobDBKxRP) it uses); **Reconciled spec** (the concrete design decisions, reconciled between prototype, Design System, functional scope and the status model); **Process** (design in code, collaborative founder review on the `pr-<N>` preview); **Raise for approval** (open design questions and known deviations). Shaping writes or refreshes it; never leave design for the implementer to invent, and never contradict the Design System without founder approval. Link exact PRD requirement/scenario identifiers for product work. Defects, risks, and operational obligations instead link concrete evidence or the explicit obligation. `Production impact` must classify semantic publication as **required for ticket acceptance**, **deferred to product release review**, or **none**, with the release boundary or reason; do not silently equate merge with release.
 
 ### 7. Engineering-ready review
 
