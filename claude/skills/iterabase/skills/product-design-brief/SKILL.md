@@ -30,7 +30,7 @@ It does not create implementation tickets, choose runtime architecture, or make 
 2. The Linear ticket's `Decisions (design review, <date>)` section defines the detailed contract for the slice.
 3. Repository architecture decisions define technical constraints but do not invent product behavior.
 4. The Iterabase Design System (https://claude.ai/artifact/B3WS3oBCdjQM3wobDBKxRP, rebranded 2026-10-13) and the app foundation patterns in code define visual language and components. It is mandatory; new tokens, patterns or components need founder approval.
-5. **The prototype** is the "Delight, trusted (chosen direction)" page of the V2 App Foundation canvas (https://claude.ai/artifact/CtvRvGmeacVMkFBAUgCiiQ): the reference for customer UI, not a pixel spec. Superseded canvas pages (Command center, experiments, sidebar draft) are not references. The founder-reviewed preview of the implementing PR is the accepted design.
+5. **The prototype** is the "Delight, trusted (chosen direction)" page of the V2 App Foundation canvas (https://claude.ai/artifact/CtvRvGmeacVMkFBAUgCiiQ): the reference for customer UI, not a pixel spec. Its PT-PT counterpart is the "Delight, trusted · PT-PT" page; the product ships in English and European Portuguese (HOR-670). Superseded canvas pages (Command center, experiments, sidebar draft) are not references. The founder-reviewed preview of the implementing PR is the accepted design.
 
 The 2026-08 V2 designer briefs, frozen prototype exports and coverage inventories in Obsidian `Designs/` are **reference only**. Do not require hash parity or frozen-design verification.
 
@@ -46,7 +46,7 @@ The 2026-08 V2 designer briefs, frozen prototype exports and coverage inventorie
 ## Workflow
 
 1. **Locate the context:** read the PRD section, the ticket's Decisions section (if a ticket exists), and the existing app patterns. State whether this is exploration or a pattern prototype.
-2. **Prototype:** build the artifact on the Iterabase Design System with realistic data (for example the Lusocargo or LusoPanarcos workflows). Show the key states, not every permutation.
+2. **Prototype:** build the artifact on the Iterabase Design System with realistic data (for example the Lusocargo or LusoPanarcos workflows). Show the key states, not every permutation. When a prototype introduces new customer-facing copy, also add the PT-PT version to the PT-PT page, following the HOR-670 glossary.
 3. **Founder review:** walk the founder through it; iterate in the artifact until the direction is agreed.
 4. **Record the outcome where agents read it:**
    - approved idea or pattern → reflect it in the prototype, then reconcile it into the affected tickets' `## Design` sections (and Decisions);

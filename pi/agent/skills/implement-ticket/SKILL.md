@@ -185,7 +185,7 @@ Before completion confirm:
 Continue directly into the `open-pr` workflow in the same run:
 
 - Fetch the ticket again and carry its requirement links, validation, production-impact classification, warnings, and approved `DES-*` records into the PR.
-- For UI changes, put the `pr-<N>` preview URL in the PR body with desktop and phone screenshots, and ask the founder to review the design on the preview. List every deviation from the Design section, prototype or Design System, and every new pattern or open design question, under **Raise for approval**. Address founder feedback in follow-up commits on the same PR, and write approved design decisions back into the ticket's `## Design` section and Decisions.
+- For UI changes, put the `pr-<N>` preview URL in the PR body with desktop and phone screenshots in EN and PT-PT (all customer-facing strings go through the HOR-670 message catalogs with complete PT-PT copy; never hard-code copy), and ask the founder to review the design on the preview. List every deviation from the Design section, prototype or Design System, and every new pattern or open design question, under **Raise for approval**. Address founder feedback in follow-up commits on the same PR, and write approved design decisions back into the ticket's `## Design` section and Decisions.
 - Call `open_pr` with the `worktree` path returned by `worktree_ensure`; do not use raw `gh pr create`.
 - The tool refuses a non-convention path, a dirty worktree, a branch that does not match the ticket, and a PR head that differs from the worktree HEAD.
 - The tool waits for all checks on the created head. Do not report completion while checks are missing, pending, failed, cancelled, timed out, or belong to an older head SHA.

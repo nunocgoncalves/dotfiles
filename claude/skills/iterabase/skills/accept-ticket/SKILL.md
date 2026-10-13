@@ -118,7 +118,7 @@ Also verify:
 - Documentation/runbooks were updated when required
 - Known failures are represented by approved follow-up defects, not hidden prose
 - The merged diff did not silently expand or contradict product scope
-- For UI changes: durable evidence that the founder approved the design on the `pr-<N>` preview (a PR comment or review, or a Linear note), and every design change approved during review written back into the ticket's `## Design` section. Missing preview approval blocks acceptance; a missing write-back is fixed in the ticket before acceptance. Parity with a frozen prototype file is not required and is not evidence
+- For UI changes: durable evidence that the founder approved the design on the `pr-<N>` preview (a PR comment or review, or a Linear note), and every design change approved during review written back into the ticket's `## Design` section, plus evidence that the screens render complete, reviewed EN and PT-PT copy (including dates, numbers and currency). Missing preview approval or missing PT-PT copy blocks acceptance; a missing write-back is fixed in the ticket before acceptance. Parity with a frozen prototype file is not required and is not evidence
 
 ### 6. Decide
 
