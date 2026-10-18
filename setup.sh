@@ -43,7 +43,7 @@ stow --target="$HOME/.config/nvim"                     nvim
 stow --target="$HOME/.config/tmux"                     tmux
 stow --target="$HOME/Library/Application Support/k9s"  k9s
 stow --target="$HOME/.pi"                             pi
-stow --target="$HOME/.claude"                         claude
+# Work agent tooling lives in a private repo: clone it and run its link.sh.
 
 echo
 echo "==> Done. Open a new shell."
