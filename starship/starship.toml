@@ -7,8 +7,9 @@ right_format = """$all"""
 command_timeout = 1000
 
 [directory.substitutions]
-"~/Developer/nunocgoncalves" = "dev"
-"~/Developer/Iterabase-x-AI-Square" = "iterabase-ai"
+"~/Developer/iterabase-aisquare" = "ib-ai2"
+"~/Developer/iterabase" = "ib"
+"~/Developer/personal" = "dev"
 "~/Developer/worktrees" = "wt"
 "~/Documents/2nd-brain" = "brain"
 
