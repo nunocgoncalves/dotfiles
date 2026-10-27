@@ -31,6 +31,7 @@ path the consuming tool expects:
 | `sshconfig/` | `~/.ssh/` → `~/.ssh/config` |
 | `starship/` | `~/.config/` → `~/.config/starship.toml` |
 | `ghostty/` | `~/.config/` → `~/.config/ghostty` |
+| `karabiner/` | `~/.config/` → `~/.config/karabiner` (whole dir — Karabiner ignores a symlinked `karabiner.json`) |
 | `nvim/` | `~/.config/nvim/` |
 | `tmux/` | `~/.config/tmux/` |
 | `k9s/` | `~/Library/Application Support/k9s/` |

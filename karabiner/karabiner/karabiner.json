@@ -1,0 +1,23 @@
+{
+  "profiles": [
+    {
+      "name": "Default profile",
+      "selected": true,
+      "virtual_hid_keyboard": { "keyboard_type_v2": "ansi" },
+      "complex_modifications": {
+        "rules": [
+          {
+            "description": "F13 -> fn (split keyboard key for Wispr Flow)",
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": { "key_code": "f13", "modifiers": { "optional": ["any"] } },
+                "to": [{ "apple_vendor_top_case_key_code": "keyboard_fn" }]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

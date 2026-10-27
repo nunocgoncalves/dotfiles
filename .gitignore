@@ -36,3 +36,6 @@ id_ed25519
 # (they were previously tracked as gitlinks with no .gitmodules, which left
 #  a fresh clone with 11 empty directories)
 tmux/plugins/
+
+# Karabiner writes timestamped config backups next to karabiner.json
+karabiner/karabiner/automatic_backups/
