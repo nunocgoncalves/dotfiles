@@ -120,6 +120,20 @@ fi
 export STARSHIP_CONFIG="$HOME/.config/starship.toml"
 eval "$(starship init zsh)"
 
+# Report the working directory to the terminal (OSC 7) so new panes and floats
+# open where you are. Ghostty did this through its own shell integration; Rex
+# needs the shell to say it. Ghostty already sends it, so skip it there.
+if [[ "$TERM_PROGRAM" == rex ]]; then
+    _osc7_cwd() {
+        setopt localoptions extendedglob
+        local url=${PWD//(#m)[^A-Za-z0-9\/._~-]/%${(l:2::0:)$(( [##16] #MATCH ))}}
+        printf '\e]7;file://%s%s\e\\' "$HOST" "$url"
+    }
+    autoload -Uz add-zsh-hook
+    add-zsh-hook chpwd _osc7_cwd
+    _osc7_cwd
+fi
+
 # The viins keymap has no useful default for ^E: it self-inserts a raw ^E
 # control character into the command line. Give it the standard end-of-line
 # meaning. (^R is also inert in viins - it is bound to redisplay, a no-op

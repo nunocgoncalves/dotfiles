@@ -1,3 +1,6 @@
+# Added by "rex terminfo setup". Remove it with "rex terminfo remove".
+Include "/Users/nunogoncalves/.config/rex/ssh_config"
+
 # Defaults for every host.
 #
 # NOTE: UseKeychain is an Apple-only extension and is FATAL under Homebrew's

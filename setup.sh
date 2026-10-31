@@ -40,6 +40,7 @@ stow --target="$HOME/.ssh"                             sshconfig
 stow --target="$HOME/.config"                          starship
 stow --target="$HOME/.config"                          ghostty
 stow --target="$HOME/.config"                          karabiner
+stow --target="$HOME/.config"                          rex
 stow --target="$HOME/.config/nvim"                     nvim
 stow --target="$HOME/.config/tmux"                     tmux
 stow --target="$HOME/Library/Application Support/k9s"  k9s
