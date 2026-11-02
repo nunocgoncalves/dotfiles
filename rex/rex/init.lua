@@ -169,8 +169,41 @@ rex.bind("resize/l", "pane.resize", { direction = "right" })
 
 -- Find, prompts
 rex.bind("ctrl+a>/", "client.find.open")
-rex.bind("ctrl+a>[", "client.prompt.previous")
-rex.bind("ctrl+a>]", "client.prompt.next")
+rex.bind("ctrl+a>shift+[", "client.prompt.previous") -- {
+rex.bind("ctrl+a>shift+]", "client.prompt.next")     -- }
+
+-- Copy mode, like tmux prefix [: opens this pane's screen and scrollback in
+-- Neovim in a float, cursor on the last line. y copies to the clipboard and
+-- closes; q closes. It's a snapshot. Full-screen apps (Claude, vim) have no
+-- scrollback, so you get only what's on screen.
+rex.action{
+  name  = "copy_mode",
+  title = "Copy Mode",
+  run   = function(ctx)
+    local script = [[
+f=$(mktemp -t rex-copy) || exit 1
+rex capture -s "$1" -b "$2" --trim --unwrap > "$f"
+nvim -R -n "$f" \
+  -c 'set clipboard=unnamedplus nomodified' \
+  -c 'nnoremap <silent> q <cmd>qa!<CR>' \
+  -c 'autocmd TextYankPost * if v:event.operator ==# "y" | call timer_start(0, {-> execute("qa!")}) | endif' \
+  -c 'normal! G'
+rm -f "$f"
+]]
+    local here, derr = rex.session.describe_block{ block_id = ctx.block_id }
+    if derr ~= nil then error(derr, 0) end
+    local _, err = rex.session.new_layer{
+      window_id = here.block.window_id,
+      bounds = { 0.05, 0.05, 0.9, 0.9 },
+      focus  = true,
+      layout = rex.layout.block{ flavor = SHELL_FLAVOR, options = {
+        command = { "sh", "-c", script, "sh", ctx.session_id, ctx.block_id },
+      } },
+    }
+    if err ~= nil then error(err, 0) end
+  end,
+}
+rex.bind("ctrl+a>[", "copy_mode")
 
 -- Config
 rex.bind("ctrl+a>shift+r", "client.config.reload")
