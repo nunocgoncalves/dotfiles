@@ -1,0 +1,52 @@
+{
+  "permissions": {
+    "allow": []
+  },
+  "model": "opus[1m]",
+  "statusLine": {
+    "type": "command",
+    "command": "bash /Users/nunogoncalves/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "vercel@claude-plugins-official": false
+  },
+  "extraKnownMarketplaces": {
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
+    }
+  },
+  "alwaysThinkingEnabled": true,
+  "tui": "fullscreen",
+  "voice": {
+    "enabled": true,
+    "mode": "hold"
+  },
+  "autoMemoryDirectory": "/Users/nunogoncalves/Developer/iterabase/agent-stack/memory",
+  "theme": "light",
+  "autoContinueAtUsageLimit": true,
+  "remoteControlAtStartup": false,
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true,
+  "voiceEnabled": true,
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "autoCompactWindow": 400000
+    }
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/sh -c 'rex __internal session-start --agent claude 2>/dev/null || true'",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
