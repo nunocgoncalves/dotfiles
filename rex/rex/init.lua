@@ -7,6 +7,7 @@ rex.bind("ctrl+a>ctrl+a", "pane.send_key", { key = "ctrl+a" })
 -- Tabs (tmux windows)
 rex.bind("ctrl+a>c", "client.tab.new")
 rex.bind("ctrl+a>n", "client.tab.next")
+rex.bind("ctrl+a>p", "client.tab.previous")
 rex.bind("ctrl+a>,", "client.tab.rename")
 for i = 1, 9 do
   rex.bind("ctrl+a>" .. i, "client.tab.goto", { index = i })
@@ -33,7 +34,7 @@ rex.bind("ctrl+a>l", "pane.focus.right")
 rex.bind("ctrl+a>=", "pane.balance")
 rex.bind("ctrl+a>shift+1", "pane.move_to_new_tab")
 
--- Floating shell, like tmux-floax on prefix p. One per session, labeled "float".
+-- Floating shell, like tmux-floax, on prefix ctrl+p (prefix p is previous tab). One per session, labeled "float".
 -- Pressed outside it: show it over the current tab (open one in this pane's
 -- directory if there is none). Pressed inside it: hide it. Hiding detaches the
 -- pane, so its program keeps running and comes back as you left it.
@@ -91,7 +92,7 @@ rex.action{
     rex.session.set_block_label{ block_id = created.block_ids[1], label = FLOAT_LABEL }
   end,
 }
-rex.bind("ctrl+a>p", "float_toggle")
+rex.bind("ctrl+a>ctrl+p", "float_toggle")
 -- Float the current pane out of its split (needs 2+ panes in the tab).
 rex.bind("ctrl+a>f", "pane.float")
 
