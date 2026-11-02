@@ -3,39 +3,6 @@
     "allow": []
   },
   "model": "opus[1m]",
-  "statusLine": {
-    "type": "command",
-    "command": "bash /Users/nunogoncalves/.claude/statusline-command.sh"
-  },
-  "enabledPlugins": {
-    "vercel@claude-plugins-official": false
-  },
-  "extraKnownMarketplaces": {
-    "openai-codex": {
-      "source": {
-        "source": "github",
-        "repo": "openai/codex-plugin-cc"
-      }
-    }
-  },
-  "alwaysThinkingEnabled": true,
-  "tui": "fullscreen",
-  "voice": {
-    "enabled": true,
-    "mode": "hold"
-  },
-  "autoMemoryDirectory": "/Users/nunogoncalves/Developer/iterabase/agent-stack/memory",
-  "theme": "light",
-  "autoContinueAtUsageLimit": true,
-  "remoteControlAtStartup": false,
-  "inputNeededNotifEnabled": true,
-  "agentPushNotifEnabled": true,
-  "voiceEnabled": true,
-  "modelSettings": {
-    "claude-opus-5-5": {
-      "autoCompactWindow": 400000
-    }
-  },
   "hooks": {
     "SessionStart": [
       {
@@ -48,5 +15,31 @@
         ]
       }
     ]
-  }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash /Users/nunogoncalves/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "vercel@claude-plugins-official": false
+  },
+  "extraKnownMarketplaces": {},
+  "alwaysThinkingEnabled": true,
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "autoCompactWindow": 400000
+    }
+  },
+  "tui": "fullscreen",
+  "voice": {
+    "enabled": true,
+    "mode": "hold"
+  },
+  "autoMemoryDirectory": "/Users/nunogoncalves/Developer/iterabase/agent-stack/memory",
+  "theme": "light",
+  "autoContinueAtUsageLimit": true,
+  "remoteControlAtStartup": false,
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true,
+  "voiceEnabled": true
 }
