@@ -26,7 +26,3 @@ Host crs326-core
   HostName 10.177.12.2
   IdentityFile ~/.ssh/id_ed25519_crs326-core
 
-Host r2dqgjo8
-  User forge
-  HostName 10.177.10.10
-  IdentityFile ~/.ssh/id_ed25519_r2dqgjo8
